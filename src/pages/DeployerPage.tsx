@@ -1,61 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import Background from '../components/Background';
 import Header from '../components/home/Header';
 import Footer from '../components/home/Footer';
-import TokenDeployForm from '../components/common/TokenDeployForm';
+import TokenDeployForm, { DeploymentConfig } from '../components/common/TokenDeployForm';
 import DeploymentLogs from '../components/common/DeploymentLogs';
+import { axiosHttp, API_URL } from '../lib/axios';
+import { useLogsStore } from '../store/usePumpfunLogs';
 
 const DeployerPage: React.FC = () => {
   const navigate = useNavigate();
+  const { logs, clearLogs } = useLogsStore();
   const [deploymentState, setDeploymentState] = useState<'idle' | 'deploying' | 'success' | 'error'>('idle');
-  const [logs, setLogs] = useState<string[]>([]);
   const [deployedToken, setDeployedToken] = useState<{
     name: string;
-    ticker: string;
+    symbol: string;
     address: string;
   } | null>(null);
 
-  const handleDeploy = async (formData: {
-    name: string;
-    ticker: string;
-    twitter: string;
-    telegram: string;
-    website: string;
-    imageUrl: string | null;
-  }) => {
-    setDeploymentState('deploying');
-    setLogs([`Processing launch of ${formData.name} (${formData.ticker})...`]);
+  useEffect(() => {
+    if (logs.length > 0) {
+      let successLogs = logs.find(x => x.address);
+      if (successLogs) {
+        setDeploymentState('success');
+        setDeployedToken({
+          name: successLogs.name!,
+          symbol: successLogs.symbol!,
+          address: successLogs.address!
+        });
+      }
+    }
+  }, [logs]);
 
+  useEffect(() => {
+    () => {
+      clearLogs();
+    }
+  }, []);
+
+  const handleDeploy = async (formData: DeploymentConfig) => {
     try {
-      // Simulate deployment steps with delays
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setLogs(prev => [...prev, 'Validating token configuration...']);
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setLogs(prev => [...prev, 'Purchasing $125 worth of Sprout v1 tokens...']);
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setLogs(prev => [...prev, 'Allocating 1% token supply to collector wallet...']);
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setLogs(prev => [...prev, `Deploying ${formData.name}...`]);
-
-      // Simulate token address generation
-      const tokenAddress = '7pLKYWmGvF8dR9zNXH4RtBxQ6JY1nM2UeSJ4KQwXhDVn';
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setLogs(prev => [...prev, `Successfully launched ${formData.name} (${formData.ticker})!`]);
-      setDeploymentState('success');
-      setDeployedToken({
-        name: formData.name,
-        ticker: formData.ticker,
-        address: tokenAddress
-      });
-
+      setDeploymentState('deploying');
+      await axiosHttp.post(`${API_URL}/pumpfun`, formData);
     } catch (error) {
-      setLogs(prev => [...prev, `Failed to launch ${formData.name}: ${error instanceof Error ? error.message : 'Unknown error'}`]);
       setDeploymentState('error');
     }
   };
@@ -64,7 +52,6 @@ const DeployerPage: React.FC = () => {
     <div className="min-h-screen flex flex-col">
       <Background />
       <Header />
-      
       <div className="flex-1 relative">
         <div className="absolute inset-0 overflow-y-auto">
           <div className="container max-w-4xl mx-auto px-4 py-24">
@@ -75,19 +62,19 @@ const DeployerPage: React.FC = () => {
                   Launch your token through Sprout and automatically contribute to the ecosystem
                 </p>
               </div>
-
+              {deploymentState}
               {deploymentState === 'idle' ? (
-                <TokenDeployForm 
+                <TokenDeployForm
                   onDeploy={handleDeploy}
-                  disabled={deploymentState === 'deploying'}
+                  disabled={deploymentState === 'deploying' as any}
                 />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <DeploymentLogs 
+                  <DeploymentLogs
                     state={deploymentState}
                     logs={logs}
                   />
-                  
+
                   {deploymentState === 'success' && deployedToken && (
                     <div className="mt-6 space-y-3">
                       <a
@@ -99,7 +86,7 @@ const DeployerPage: React.FC = () => {
                         View {deployedToken.name} on DexScreener
                         <ExternalLink size={16} />
                       </a>
-                      
+
                       <button
                         onClick={() => navigate('/farm')}
                         className="w-full flex items-center justify-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
@@ -111,7 +98,7 @@ const DeployerPage: React.FC = () => {
                       <button
                         onClick={() => {
                           setDeploymentState('idle');
-                          setLogs([]);
+                          clearLogs();
                           setDeployedToken(null);
                         }}
                         className="w-full px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
@@ -125,7 +112,7 @@ const DeployerPage: React.FC = () => {
                     <button
                       onClick={() => {
                         setDeploymentState('idle');
-                        setLogs([]);
+                        clearLogs();
                         setDeployedToken(null);
                       }}
                       className="mt-6 px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"

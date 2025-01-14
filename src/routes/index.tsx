@@ -12,12 +12,14 @@ import { useAuthStore } from '../store/useAuthStore';
 import { EpochResourcesStatistics } from '../components/conservatory/EpochProgress';
 import { useEpochsCtx } from '../context/EpochsContext';
 import { useResourcesCtx } from '../context/ResourcesContext';
+import { PumpfunLogs, useLogsStore } from '../store/usePumpfunLogs';
 
 const AppRoutes: React.FC = () => {
   const { setEpochs } = useEpochsCtx();
   const { setSprouts, setStatistics } = useResourcesCtx();
   const { socket, reconnect, disconnect } = useSocket();
   const { profile } = useAuthStore();
+  const { addLogs } = useLogsStore();
   useEffect(() => {
     if (socket) {
       socket.on('connect', () => {
@@ -28,6 +30,11 @@ const AppRoutes: React.FC = () => {
         setSprouts(data.leaderboard.users);
         setStatistics(data.leaderboard.statistics);
       });
+
+      socket.on('pumpfun', (data: PumpfunLogs) => {
+        console.log(data);
+        addLogs(data);
+      })
     } else {
       reconnect();
     }

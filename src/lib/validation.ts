@@ -1,5 +1,5 @@
-export const validateTokenInfo = (name: string, ticker: string): boolean => {
-  return name.trim() !== '' && ticker.trim() !== '';
+export const validateTokenInfo = (name: string, symbol: string): boolean => {
+  return name.trim() !== '' && symbol.trim() !== '';
 };
 
 export const validateSocials = (twitter: string, telegram: string, website: string): boolean => {
