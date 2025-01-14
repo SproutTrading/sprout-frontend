@@ -332,7 +332,7 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled })
           </button>
 
           <div className="text-center space-y-4">
-            <LoginForm />
+            <LoginForm displayTitle={true} />
           </div>
         </div>
       </div>
@@ -344,11 +344,11 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled })
         <div className="text-sm text-blue-700">
           <p className="font-medium mb-1">Launch Requirements:</p>
           <ul className="list-disc list-inside space-y-1">
-            <li>$125 worth of Sprout v1 tokens will be purchased</li>
-            <li>1% of token supply will be allocated to collector wallet</li>
+            <li>$25 worth of Sprout v1 tokens will be purchased</li>
+            <li>0.5% of token supply will be allocated to collector wallet</li>
             <li>Token will be listed on Raydium</li>
             <li>Sufficient SOL balance for transaction fees and Jito tip</li>
-            <li>Sufficient SOL balance to cover the $125 Sprout v1 purchase</li>
+            <li>Sufficient SOL balance to cover the $25 Sprout v1 purchase</li>
           </ul>
         </div>
       </div>

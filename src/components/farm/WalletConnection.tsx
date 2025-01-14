@@ -1,26 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
+import LoginForm from '../profile/LoginForm';
+import { User } from '../../lib/auth';
 
-interface WalletConnectionProps {
-  onConnect: () => void;
-}
 
-const WalletConnection: React.FC<WalletConnectionProps> = ({ onConnect }) => {
+const WalletConnection: React.FC = ({ }) => {
   const { profile } = useAuthStore();
-  const [status, setStatus] = useState<'initial' | 'connecting' | 'connected'>('initial');
-  const [farmerId, setFarmerId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (status === 'connecting') {
-      const timer = setTimeout(() => {
-        setStatus('connected');
-        setFarmerId('00001');
-        onConnect();
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [status, onConnect]);
+  const [status] = useState<'initial' | 'connecting' | 'connected'>('initial');
 
   // If already connected, show the connected state
   if (profile) {
@@ -28,7 +15,7 @@ const WalletConnection: React.FC<WalletConnectionProps> = ({ onConnect }) => {
       <div className="w-72 flex flex-col items-center justify-center space-y-2 text-center">
         <div className="text-sm text-emerald-600">Connected!</div>
         <div className="text-sm font-medium text-emerald-700">
-          Logged in as: {profile.gardenerId}
+          Logged in as: Gardener #{String(profile.id).padStart(5, '0')}
         </div>
       </div>
     );
@@ -39,14 +26,9 @@ const WalletConnection: React.FC<WalletConnectionProps> = ({ onConnect }) => {
       <p className="text-sm text-emerald-700 font-medium text-center">
         Please log in to purchase & contribute to tokens.
       </p>
-      
+
       {status === 'initial' && (
-        <button
-          onClick={() => setStatus('connecting')}
-          className="w-full px-5 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all text-sm"
-        >
-          Sign in using Phantom
-        </button>
+        <LoginForm displayTitle={false} />
       )}
 
       {status === 'connecting' && (
@@ -60,7 +42,7 @@ const WalletConnection: React.FC<WalletConnectionProps> = ({ onConnect }) => {
         <div className="space-y-2 text-center">
           <div className="text-sm text-emerald-600">Connected!</div>
           <div className="text-sm font-medium text-emerald-700">
-            Logged in as: Farmer #{farmerId}
+            Logged in as: Gardener #{String((profile ? (profile as User).id : 0)).padStart(5, '0')}
           </div>
         </div>
       )}

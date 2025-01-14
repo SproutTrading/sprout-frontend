@@ -5,11 +5,11 @@ import ProfileView from './ProfileView';
 
 const UnifiedProfile: React.FC = () => {
   const { profile } = useAuthStore();
-  
+
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 via-emerald-50 to-white">
       <div className="h-full overflow-auto p-6">
-        {profile ? <ProfileView /> : <LoginForm />}
+        {profile ? <ProfileView /> : <LoginForm displayTitle={true} />}
       </div>
     </div>
   );

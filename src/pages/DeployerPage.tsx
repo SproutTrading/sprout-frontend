@@ -62,7 +62,6 @@ const DeployerPage: React.FC = () => {
                   Launch your token through Sprout and automatically contribute to the ecosystem
                 </p>
               </div>
-              {deploymentState}
               {deploymentState === 'idle' ? (
                 <TokenDeployForm
                   onDeploy={handleDeploy}

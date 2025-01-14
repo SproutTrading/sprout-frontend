@@ -17,8 +17,8 @@ const DeployerSection: React.FC = () => {
             <div>
               <h3 className="font-medium text-emerald-800 mb-1">Launch Requirements</h3>
               <ul className="space-y-2 text-sm text-emerald-600">
-                <li>$125 worth of Sprout v1 tokens will be purchased automatically</li>
-                <li>1% of token supply allocated to Sprout.trading collector wallet</li>
+                <li>$25 worth of Sprout v1 tokens will be purchased automatically</li>
+                <li>0.5% of token supply allocated to Sprout.trading collector wallet</li>
                 <li>Token will be listed on Raydium for trading</li>
               </ul>
             </div>
