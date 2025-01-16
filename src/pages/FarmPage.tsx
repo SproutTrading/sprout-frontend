@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Background from '../components/Background';
 import Header from '../components/home/Header';
 import Footer from '../components/home/Footer';
@@ -9,15 +9,23 @@ import { usePumpFunTokensStore } from '../store/usePumpfunTokens';
 
 const FarmPage: React.FC = () => {
   const { tokens, setTokens } = usePumpFunTokensStore();
+  const [page, setCurrentPage] = useState(1);
+  const [count, setCount] = useState(1);
   useEffect(() => {
     getPumpfunFarmTokens();
-  }, []);
+  }, [page]);
 
   const getPumpfunFarmTokens = async () => {
-    let { data: { ok, data } } = await axiosHttp.get(`${API_URL}/pumpfun/farm`);
+    let { data: { ok, data: { token_data, count, page: currentPage } } } = await axiosHttp.get(`${API_URL}/pumpfun/farm?page=${page}`);
     if (ok) {
-      setTokens(data);
+      setTokens(token_data);
+      setCount(count);
+      setCurrentPage(currentPage);
     }
+  }
+
+  const handleChange = async (_: React.ChangeEvent<unknown>, page: number) => {
+    setCurrentPage(page);
   }
 
   return (
@@ -61,7 +69,7 @@ const FarmPage: React.FC = () => {
                 <WalletConnection />
               </div>
 
-              <TokenGrid tokens={tokens} />
+              <TokenGrid tokens={tokens} page={page} count={count} handleChange={handleChange} />
             </div>
           </div>
         </div>

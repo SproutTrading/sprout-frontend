@@ -1,17 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import TokenCard from './TokenCard';
 import TokenFilters from './TokenFilters';
-import Pagination from './Pagination';
 import SidePanel from './SidePanel';
 import type { PanelType } from './SidePanel';
 import { TokenDataFarm } from '../widget/TokenWidget';
+import { Pagination } from '@mui/material';
 
 const ITEMS_PER_PAGE = 15;
 
-const TokenGrid: React.FC<{ tokens: TokenDataFarm[] }> = ({ tokens }) => {
+const TokenGrid: React.FC<{ tokens: TokenDataFarm[], count: number, page: number, handleChange: (event: React.ChangeEvent<unknown>, page: number) => void }> = ({ count, page, tokens, handleChange }) => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'marketCap' | 'price' | 'holders'>('marketCap');
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedToken, setSelectedToken] = useState<TokenDataFarm | null>(null);
   const [panelType, setPanelType] = useState<PanelType>(null);
 
@@ -42,10 +41,10 @@ const TokenGrid: React.FC<{ tokens: TokenDataFarm[] }> = ({ tokens }) => {
   }, [tokens, search, sortBy]);
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredTokens.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
   const paginatedTokens = filteredTokens.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
   );
 
   const handleBuy = (token: TokenDataFarm) => {
@@ -84,11 +83,9 @@ const TokenGrid: React.FC<{ tokens: TokenDataFarm[] }> = ({ tokens }) => {
       </div>
 
       {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
+        <div className="flex justify-center">
+          <Pagination count={totalPages} page={page} onChange={handleChange} />
+        </div>
       )}
 
       <SidePanel
