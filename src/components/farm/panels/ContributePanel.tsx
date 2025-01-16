@@ -1,24 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useResourceStore } from '../../../store/useResourceStore';
 import PurchaseConsole, { LogState } from './PurchaseConsole';
+import { TokenDataFarm } from '../../widget/TokenWidget';
+import { axiosHttp, API_URL } from '../../../lib/axios';
+import { useAuthStore } from '../../../store/useAuthStore';
 
 interface ContributePanelProps {
-  token: {
-    name: string;
-    ticker: string;
-    resources: {
-      water: number;
-      fertilizer: number;
-      sunshine: number;
-    };
-  };
+  token: TokenDataFarm;
   onClose: () => void;
 }
 
 const ContributePanel: React.FC<ContributePanelProps> = ({ token }) => {
-  const { water_non_contributed, fertilizer_non_contributed, sunshine_non_contributed, useResource } = useResourceStore();
+  const { water_non_contributed, fertilizer_non_contributed, sunshine_non_contributed, useResource, setResources, setContributions } = useResourceStore();
   const [logState, setLogState] = useState<LogState>(null);
   const [logMessage, setLogMessage] = useState('');
+  const { profile } = useAuthStore();
+  useEffect(() => {
+    if (profile) {
+      getUserResources();
+    } else {
+      setResources(0, 0, 0, 0, 0, 0);
+    }
+  }, [profile]);
+
+  const getUserResources = async () => {
+    let { data: { ok, data: response } } = await axiosHttp.get(`${API_URL}/resources/data`);
+    if (ok) {
+      setResources(response.water.contributed, response.water.non_contributed, response.fertilizer.contributed, response.fertilizer.non_contributed, response.sunshine.contributed, response.sunshine.non_contributed);
+      setContributions(response.contributions);
+    }
+  }
 
   const handleContribute = async (type: 'water_contributed' | 'water_non_contributed' | 'fertilizer_contributed' | 'fertilizer_non_contributed' | 'sunshine_contributed' | 'sunshine_non_contributed') => {
     if (!useResource(type)) {
@@ -26,15 +37,35 @@ const ContributePanel: React.FC<ContributePanelProps> = ({ token }) => {
       setLogMessage(`Not enough ${type} available to contribute`);
       return;
     }
+    let object_id: number | undefined;
+    let item_name = '';
+    switch (type) {
+      case 'water_non_contributed':
+        object_id = 1;
+        item_name = 'water';
+        break;
+      case 'fertilizer_non_contributed':
+        object_id = 2;
+        item_name = 'fertilizer';
+        break;
+      case 'sunshine_non_contributed':
+        object_id = 3;
+        item_name = 'sunshine';
+        break;
+    }
 
     setLogState('pending');
-    setLogMessage(`Contributing ${type} to ${token.ticker}...`);
+    setLogMessage(`Contributing ${item_name} to ${token.token.symbol}...`);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    setLogState('success');
-    setLogMessage(`Successfully contributed ${type} to ${token.ticker}!`);
+    if (!object_id) return;
+    let { data: { ok } } = await axiosHttp.post(`${API_URL}/resources/contribute`, { object_id, tokenId: token.resources.id });
+    if (ok) {
+      setLogState('success');
+      setLogMessage(`Successfully contributed ${item_name} to ${token.token.symbol}!`);
+    } else {
+      setLogState('error');
+    }
   };
 
   return (
@@ -49,8 +80,8 @@ const ContributePanel: React.FC<ContributePanelProps> = ({ token }) => {
       {/* Token Info */}
       <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
         <h3 className="text-sm font-medium text-emerald-700 mb-1">Contributing to</h3>
-        <div className="text-lg font-semibold text-emerald-800">{token.name}</div>
-        <div className="text-sm text-emerald-600">{token.ticker}</div>
+        <div className="text-lg font-semibold text-emerald-800">{token.token.name}</div>
+        <div className="text-sm text-emerald-600">{token.token.symbol}</div>
       </div>
 
       {/* Current Resources */}

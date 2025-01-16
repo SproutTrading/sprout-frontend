@@ -4,24 +4,49 @@ import { GripHorizontal, Copy, ExternalLink } from 'lucide-react';
 import { axiosHttp, API_URL } from '../../lib/axios';
 import { formatNumber } from '../../lib/format_number';
 
-interface TokenData {
-  "supply": string,
-  "address": string,
-  "name": string,
-  "symbol": string,
-  "icon": string,
-  "decimals": number,
-  "holder": number,
-  "creator": string,
-  "create_tx": string,
-  "created_time": number,
-  "first_mint_tx": string,
-  "first_mint_time": number,
-  "price": number,
-  "volume_24h": number,
-  "market_cap": number,
-  "market_cap_rank": number,
-  "price_change_24h": number
+export interface TokenIpfs {
+  name: string,
+  symbol: string,
+  description: string,
+  image: string,
+  showName: true,
+  createdOn: string,
+  twitter: string,
+  telegram: string,
+  website: string,
+}
+
+export interface TokenData {
+  supply: string,
+  address: string,
+  name: string,
+  symbol: string,
+  icon: string,
+  decimals: number,
+  holder: number,
+  creator: string,
+  create_tx: string,
+  created_time: number,
+  first_mint_tx: string,
+  first_mint_time: number,
+  price: number,
+  volume_24h: number,
+  market_cap: number,
+  market_cap_rank: number,
+  price_change_24h: number
+}
+export interface TokenDataFarmResources {
+  id: number,
+  public_key: string,
+  water: number,
+  fertilizer: number,
+  sunshine: number,
+  total: number
+}
+export interface TokenDataFarm {
+  ipfs: TokenIpfs,
+  token: TokenData,
+  resources: TokenDataFarmResources
 }
 
 const TokenWidget: React.FC = () => {

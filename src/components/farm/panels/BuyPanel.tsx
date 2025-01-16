@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import PurchaseConsole, { LogState } from './PurchaseConsole';
+import { TokenDataFarm } from '../../widget/TokenWidget';
 
 interface BuyPanelProps {
-  token: {
-    name: string;
-    ticker: string;
-  };
+  token: TokenDataFarm;
   onClose: () => void;
 }
 
@@ -21,15 +19,15 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token, onClose }) => {
     const total = amount + tip;
 
     setLogState('pending');
-    setLogMessage(`Processing purchase of ${token.ticker} for ${amount} SOL (${tip} SOL tip)...`);
-    
+    setLogMessage(`Processing purchase of ${token.token.symbol} for ${amount} SOL (${tip} SOL tip)...`);
+
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     setLogState('success');
-    setLogMessage(`Successfully purchased ${token.ticker} for ${total} SOL total! Transaction confirmed.`);
-    
+    setLogMessage(`Successfully purchased ${token.token.symbol} for ${total} SOL total! Transaction confirmed.`);
+
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     setLogState('error');
     setLogMessage(`Failed to process next transaction: Insufficient funds (${total} SOL required)`);
   };
@@ -38,8 +36,8 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token, onClose }) => {
     <div className="p-4 space-y-4">
       <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
         <h3 className="text-sm font-medium text-emerald-700 mb-1">Token Info</h3>
-        <div className="text-lg font-semibold text-emerald-800">{token.name}</div>
-        <div className="text-sm text-emerald-600">{token.ticker}</div>
+        <div className="text-lg font-semibold text-emerald-800">{token.token.name}</div>
+        <div className="text-sm text-emerald-600">{token.token.symbol}</div>
       </div>
 
       <div className="space-y-4">
@@ -95,7 +93,7 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token, onClose }) => {
       </button>
 
       {logState && (
-        <PurchaseConsole 
+        <PurchaseConsole
           state={logState}
           message={logMessage}
         />

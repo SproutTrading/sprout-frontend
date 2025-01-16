@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Background from '../components/Background';
 import Header from '../components/home/Header';
 import Footer from '../components/home/Footer';
 import TokenGrid from '../components/farm/TokenGrid';
 import WalletConnection from '../components/farm/WalletConnection';
+import { axiosHttp, API_URL } from '../lib/axios';
+import { usePumpFunTokensStore } from '../store/usePumpfunTokens';
 
 const FarmPage: React.FC = () => {
+  const { tokens, setTokens } = usePumpFunTokensStore();
+  useEffect(() => {
+    getPumpfunFarmTokens();
+  }, []);
+
+  const getPumpfunFarmTokens = async () => {
+    let { data: { ok, data } } = await axiosHttp.get(`${API_URL}/pumpfun/farm`);
+    if (ok) {
+      setTokens(data);
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Background />
@@ -47,7 +61,7 @@ const FarmPage: React.FC = () => {
                 <WalletConnection />
               </div>
 
-              <TokenGrid />
+              <TokenGrid tokens={tokens} />
             </div>
           </div>
         </div>
