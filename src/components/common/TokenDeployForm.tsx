@@ -346,7 +346,7 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled })
           <ul className="list-disc list-inside space-y-1">
             <li>$25 worth of Sprout v1 tokens will be purchased</li>
             <li>0.5% of token supply will be allocated to collector wallet</li>
-            <li>Token will be listed on Raydium</li>
+            <li>Listed on Pump.fun, and if it migrates to Raydium</li>
             <li>Sufficient SOL balance for transaction fees and Jito tip</li>
             <li>Sufficient SOL balance to cover the $25 Sprout v1 purchase</li>
           </ul>

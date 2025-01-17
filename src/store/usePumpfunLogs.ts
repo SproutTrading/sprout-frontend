@@ -14,7 +14,7 @@ export interface LogsStore {
   clearLogs: () => void;
 }
 
-export const useLogsStore = create<LogsStore>((set, _) => ({
+export const usePumpfunLogsStore = create<LogsStore>((set, _) => ({
   logs: [],
   addLogs: (input) => {
     set((state) => ({

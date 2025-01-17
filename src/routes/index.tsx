@@ -12,14 +12,16 @@ import { useAuthStore } from '../store/useAuthStore';
 import { EpochResourcesStatistics } from '../components/conservatory/EpochProgress';
 import { useEpochsCtx } from '../context/EpochsContext';
 import { useResourcesCtx } from '../context/ResourcesContext';
-import { PumpfunLogs, useLogsStore } from '../store/usePumpfunLogs';
+import { PumpfunLogs, usePumpfunLogsStore } from '../store/usePumpfunLogs';
+import { BuyLogs, useBuyLogsStore } from '../store/useBuyLogsStore';
 
 const AppRoutes: React.FC = () => {
   const { setEpochs } = useEpochsCtx();
   const { setSprouts, setStatistics } = useResourcesCtx();
   const { socket, reconnect, disconnect } = useSocket();
   const { profile } = useAuthStore();
-  const { addLogs } = useLogsStore();
+  const { addLogs } = usePumpfunLogsStore();
+  const { setBuyLogs } = useBuyLogsStore();
   useEffect(() => {
     if (socket) {
       socket.on('connect', () => {
@@ -32,8 +34,12 @@ const AppRoutes: React.FC = () => {
       });
 
       socket.on('pumpfun', (data: PumpfunLogs) => {
-        console.log(data);
         addLogs(data);
+      });
+
+      socket.on('buyTx', (data: BuyLogs) => {
+        console.log(data);
+        setBuyLogs(data);
       })
     } else {
       reconnect();

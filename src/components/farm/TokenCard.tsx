@@ -39,9 +39,9 @@ const TokenCard: React.FC<TokenCardProps> = ({ token, onBuy, onContribute }) => 
                 <div className="absolute inset-0 bg-emerald-400 rounded-full animate-[pulse_2s_infinite]" />
                 <div className="absolute inset-0 bg-emerald-400 rounded-full animate-[ping_2s_infinite]" />
               </div>
-              <h3 className="font-semibold text-emerald-800">{token.token.name}</h3>
+              <h3 className="font-semibold text-emerald-800 truncate">{token.token.name}</h3>
             </div>
-            <span className="text-sm text-emerald-600">{token.token.symbol}</span>
+            <span className="text-sm text-emerald-600 truncate">{token.token.symbol}</span>
           </div>
 
           <div className="grid grid-cols-3 gap-2 text-xs">
@@ -92,21 +92,21 @@ const TokenCard: React.FC<TokenCardProps> = ({ token, onBuy, onContribute }) => 
                 <Twitter size={12} className="text-emerald-600" />
                 <span className="font-medium text-emerald-700">Twitter:</span>
               </div>
-              <span className="text-emerald-600 text-center flex-1">{token.ipfs.twitter ? <a href={token.ipfs.twitter} target='_blank'>{token.ipfs.twitter}</a> : 'N/A'}</span>
+              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.twitter ? <a href={token.ipfs.twitter} target='_blank'>{token.ipfs.twitter}</a> : 'N/A'}</span>
             </div>
             <div className="flex items-center">
               <div className="w-24 flex items-center gap-1.5">
                 <Globe size={12} className="text-emerald-600" />
                 <span className="font-medium text-emerald-700">Website:</span>
               </div>
-              <span className="text-emerald-600 text-center flex-1">{token.ipfs.website ? <a href={token.ipfs.website} target='_blank'>{token.ipfs.website}</a> : 'N/A'}</span>
+              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.website ? <a href={token.ipfs.website} target='_blank'>{token.ipfs.website}</a> : 'N/A'}</span>
             </div>
             <div className="flex items-center">
               <div className="w-24 flex items-center gap-1.5">
                 <MessageCircle size={12} className="text-emerald-600" />
                 <span className="font-medium text-emerald-700">Telegram:</span>
               </div>
-              <span className="text-emerald-600 text-center flex-1">{token.ipfs.telegram ? <a href={token.ipfs.telegram} target='_blank'>{token.ipfs.telegram}</a> : 'N/A'}</span>
+              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.telegram ? <a href={token.ipfs.telegram} target='_blank'>{token.ipfs.telegram}</a> : 'N/A'}</span>
             </div>
             <div className="flex items-center">
               <div className="w-24 flex items-center gap-1.5">

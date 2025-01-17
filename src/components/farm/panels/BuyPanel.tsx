@@ -1,38 +1,68 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PurchaseConsole, { LogState } from './PurchaseConsole';
 import { TokenDataFarm } from '../../widget/TokenWidget';
+import { axiosHttp, API_URL } from '../../../lib/axios';
+import { useAuthStore } from '../../../store/useAuthStore';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { VersionedTransaction } from '@solana/web3.js';
+import { useBuyLogsStore } from '../../../store/useBuyLogsStore';
 
 interface BuyPanelProps {
   token: TokenDataFarm;
   onClose: () => void;
 }
 
-const BuyPanel: React.FC<BuyPanelProps> = ({ token, onClose }) => {
+const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
   const [solAmount, setSolAmount] = useState('');
-  const [jitoTip, setJitoTip] = useState('0.0001');
+  const [jitoTip, setJitoTip] = useState('0.002');
   const [logState, setLogState] = useState<LogState>(null);
   const [logMessage, setLogMessage] = useState('');
+  const { profile } = useAuthStore();
+  const wallet = useWallet()
+  const { clearBuyLogs, latestLogs } = useBuyLogsStore();
+
+  useEffect(() => {
+    clearBuyLogs();
+  }, []);
+
+  useEffect(() => {
+    if (latestLogs) {
+      console.log(latestLogs);
+      setLogState(latestLogs.pending ? 'pending' : (latestLogs.ok ? 'success' : 'error'));
+      setLogMessage(latestLogs.message);
+    }
+  }, [latestLogs])
 
   const handleBuy = async () => {
-    const amount = parseFloat(solAmount);
+    await wallet.signIn!({});
+
+    const value = parseFloat(solAmount);
     const tip = parseFloat(jitoTip);
-    const total = amount + tip;
+    const total = value + tip;
 
-    setLogState('pending');
-    setLogMessage(`Processing purchase of ${token.token.symbol} for ${amount} SOL (${tip} SOL tip)...`);
+    let { data: { ok, data: { instructions } } } = await axiosHttp.post(`${API_URL}/buy/request`, {
+      tokenId: token.resources.id,
+      tip,
+      value,
+      symbol: token.token.symbol,
+      address: profile!.public_key
+    });
+    if (ok) {
+      const versionedTx = VersionedTransaction.deserialize(instructions);
+      let signed = await wallet.signTransaction!(versionedTx!);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+      await axiosHttp.post(`${API_URL}/buy/process`, {
+        instructions: Array.from(signed.serialize()),
+        address: wallet.publicKey!.toString(),
+        symbol: token.token.symbol,
+        total
+      });
 
-    setLogState('success');
-    setLogMessage(`Successfully purchased ${token.token.symbol} for ${total} SOL total! Transaction confirmed.`);
-
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    setLogState('error');
-    setLogMessage(`Failed to process next transaction: Insufficient funds (${total} SOL required)`);
+    }
   };
 
-  return (
+  return <WalletModalProvider>
     <div className="p-4 space-y-4">
       <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
         <h3 className="text-sm font-medium text-emerald-700 mb-1">Token Info</h3>
@@ -99,7 +129,7 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token, onClose }) => {
         />
       )}
     </div>
-  );
+  </WalletModalProvider>
 };
 
 export default BuyPanel;

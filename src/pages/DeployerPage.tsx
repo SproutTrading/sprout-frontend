@@ -7,11 +7,11 @@ import Footer from '../components/home/Footer';
 import TokenDeployForm, { DeploymentConfig } from '../components/common/TokenDeployForm';
 import DeploymentLogs from '../components/common/DeploymentLogs';
 import { axiosHttp, API_URL } from '../lib/axios';
-import { useLogsStore } from '../store/usePumpfunLogs';
+import { usePumpfunLogsStore } from '../store/usePumpfunLogs';
 
 const DeployerPage: React.FC = () => {
   const navigate = useNavigate();
-  const { logs, clearLogs } = useLogsStore();
+  const { logs, clearLogs } = usePumpfunLogsStore();
   const [deploymentState, setDeploymentState] = useState<'idle' | 'deploying' | 'success' | 'error'>('idle');
   const [deployedToken, setDeployedToken] = useState<{
     name: string;
