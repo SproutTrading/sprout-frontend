@@ -58,7 +58,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ token, onBuy, onContribute }) => 
             </div>
             <div className="p-1.5 bg-emerald-50 rounded text-center">
               <div className="text-emerald-600">Price</div>
-              <div className="font-medium text-emerald-800">${token.token.price ?? 0}</div>
+              <div className="font-medium text-emerald-800">${token.token.price ? token.token.price.toFixed(5) : 0}</div>
             </div>
           </div>
 
