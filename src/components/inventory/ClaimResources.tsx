@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import ClaimResourcesPopup from './ClaimResourcesPopup';
 import { Gift, Timer } from 'lucide-react';
 import { axiosHttp, API_URL } from '../../lib/axios';
+import moment from 'moment';
 
 const ClaimResources: React.FC<{ refresh: boolean, setRefresh: (input: boolean) => void }> = ({ refresh, setRefresh }) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [cooldownEnd, setCooldownEnd] = useState<number | null>(null);
+  const [cooldownEnd, setCooldownEnd] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
   useEffect(() => {
@@ -20,15 +21,17 @@ const ClaimResources: React.FC<{ refresh: boolean, setRefresh: (input: boolean) 
     if (!cooldownEnd) return;
 
     const interval = setInterval(() => {
-      const now = Date.now();
-      if (now >= cooldownEnd) {
+      let now = moment(new Date());
+      let end = moment(cooldownEnd).add(1, 'hour');
+      let duration = moment.duration(now.diff(end));
+      let diff = duration.asMilliseconds();
+      let remaining = (60 * 60 * 1000) - diff;
+      if (remaining < 0) {
         setCooldownEnd(null);
         setTimeLeft('');
         clearInterval(interval);
         return;
       }
-
-      const remaining = cooldownEnd - now;
       const minutes = Math.floor(remaining / 60000);
       const seconds = Math.floor((remaining % 60000) / 1000);
       setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
@@ -39,8 +42,9 @@ const ClaimResources: React.FC<{ refresh: boolean, setRefresh: (input: boolean) 
   const getClaimData = async () => {
     let { data: { ok, data: response } } = await axiosHttp.get(`${API_URL}/resources/claim`);
     if (ok) {
-      let future_date = new Date(response.date).getTime() + (60 * 60 * 1000);
-      setCooldownEnd(future_date);
+      if (response.date) {
+        setCooldownEnd(response.date);
+      }
     }
   }
 
