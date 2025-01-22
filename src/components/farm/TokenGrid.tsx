@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import TokenCard from './TokenCard';
 import TokenFilters from './TokenFilters';
 import SidePanel from './SidePanel';
 import type { PanelType } from './SidePanel';
 import { TokenDataFarm } from '../widget/TokenWidget';
 import { Pagination } from '@mui/material';
+import { useResourcesCtx } from '../../context/ResourcesContext';
 
 const ITEMS_PER_PAGE = 15;
 
@@ -13,6 +14,7 @@ const TokenGrid: React.FC<{ tokens: TokenDataFarm[], count: number, page: number
   const [sortBy, setSortBy] = useState<'marketCap' | 'price' | 'holders'>('marketCap');
   const [selectedToken, setSelectedToken] = useState<TokenDataFarm | null>(null);
   const [panelType, setPanelType] = useState<PanelType>(null);
+  const { resourceUpdated } = useResourcesCtx();
 
   // Filter and sort tokens
   const filteredTokens = useMemo(() => {
@@ -39,6 +41,17 @@ const TokenGrid: React.FC<{ tokens: TokenDataFarm[], count: number, page: number
 
     return result;
   }, [tokens, search, sortBy]);
+
+  useEffect(() => {
+    if (resourceUpdated && selectedToken) {
+      if (selectedToken.resources && selectedToken.resources.id === resourceUpdated.id) {
+        setSelectedToken({
+          ...selectedToken,
+          resources: resourceUpdated
+        });
+      }
+    }
+  }, [resourceUpdated]);
 
   // Calculate pagination
   const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
