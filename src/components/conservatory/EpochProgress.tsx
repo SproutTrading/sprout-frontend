@@ -6,8 +6,7 @@ export interface EpochResourcesStatistics {
   water: number,
   fertilizer: number,
   sunshine: number,
-  percentage: number,
-  selected: boolean
+  percentage: number
 }
 
 const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epochs }) => {
@@ -21,14 +20,19 @@ const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epoch
         return (
           <div
             key={index}
-            className={`relative p-3 rounded-lg border-2 transition-all duration-200 bg-blue-50/80 ${epoch.selected
+            className={`relative p-3 rounded-lg border-2 transition-all duration-200 bg-blue-50/80 ${epoch.percentage == 100
               ? 'border-emerald-400'
-              : 'border-blue-200'
+              : epoch.percentage > 0 ? 'border-orange-200' : 'border-blue-200'
               } hover:bg-gradient-to-br hover:from-blue-50/80 hover:to-white`}
           >
-            {epoch.selected && (
+            {epoch.percentage == 100 && (
               <div className="absolute -top-2 -right-2 bg-white rounded-full">
                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+              </div>
+            )}
+            {epoch.percentage > 0 && epoch.percentage < 100 && (
+              <div className="absolute -top-2 -right-2 bg-white rounded-full border border-orange-200">
+                <img src='https://i.imgur.com/TRrtWrV.png' style={{ padding: '0.1rem' }} className="w-4 h-4 text-orange-500" />
               </div>
             )}
 
@@ -41,9 +45,9 @@ const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epoch
               {/* Main epoch progress */}
               <div className="h-2 bg-white/50 rounded overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-500 ease-out bg-gradient-to-r ${epoch.selected
+                  className={`h-full transition-all duration-500 ease-out bg-gradient-to-r ${epoch.percentage == 100
                     ? 'from-emerald-400 to-emerald-500'
-                    : 'from-blue-400 to-blue-500'
+                    : epoch.percentage > 0 ? 'from-orange-400 to-orange-500' : 'from-blue-400 to-blue-500'
                     }`}
                   style={{ width: `${epoch.percentage}%` }}
                 />
