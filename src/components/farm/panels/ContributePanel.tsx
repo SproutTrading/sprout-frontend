@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useResourceStore } from '../../../store/useResourceStore';
 import PurchaseConsole, { LogState } from './PurchaseConsole';
 import { TokenDataFarm } from '../../widget/TokenWidget';
 import { axiosHttp, API_URL } from '../../../lib/axios';
-import { useAuthStore } from '../../../store/useAuthStore';
 
 interface ContributePanelProps {
   token: TokenDataFarm;
@@ -11,25 +10,9 @@ interface ContributePanelProps {
 }
 
 const ContributePanel: React.FC<ContributePanelProps> = ({ token }) => {
-  const { water_non_contributed, fertilizer_non_contributed, sunshine_non_contributed, useResource, setResources, setContributions } = useResourceStore();
+  const { water_non_contributed, fertilizer_non_contributed, sunshine_non_contributed, useResource } = useResourceStore();
   const [logState, setLogState] = useState<LogState>(null);
   const [logMessage, setLogMessage] = useState('');
-  const { profile } = useAuthStore();
-  useEffect(() => {
-    if (profile) {
-      getUserResources();
-    } else {
-      setResources(0, 0, 0, 0, 0, 0);
-    }
-  }, [profile]);
-
-  const getUserResources = async () => {
-    let { data: { ok, data: response } } = await axiosHttp.get(`${API_URL}/resources/data`);
-    if (ok) {
-      setResources(response.water.contributed, response.water.non_contributed, response.fertilizer.contributed, response.fertilizer.non_contributed, response.sunshine.contributed, response.sunshine.non_contributed);
-      setContributions(response.contributions);
-    }
-  }
 
   const handleContribute = async (type: 'water_contributed' | 'water_non_contributed' | 'fertilizer_contributed' | 'fertilizer_non_contributed' | 'sunshine_contributed' | 'sunshine_non_contributed') => {
     if (!useResource(type)) {

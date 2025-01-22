@@ -4,6 +4,7 @@ import { EpochsProvider } from './context/EpochsContext';
 import { ResourcesProvider } from './context/ResourcesContext';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 
 function App() {
   const endpoint = 'https://api.mainnet-beta.solana.com';
@@ -13,11 +14,13 @@ function App() {
     <BrowserRouter>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect={true}>
-          <ResourcesProvider>
-            <EpochsProvider>
-              <AppRoutes />
-            </EpochsProvider>
-          </ResourcesProvider>
+          <WalletModalProvider>
+            <ResourcesProvider>
+              <EpochsProvider>
+                <AppRoutes />
+              </EpochsProvider>
+            </ResourcesProvider>
+          </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
     </BrowserRouter>

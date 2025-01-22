@@ -28,6 +28,6 @@ export function EpochsProvider({ children }: { children: React.ReactNode }) {
 
 export const useEpochsCtx = () => {
   const context = useContext(EpochsContext);
-  if (!context) throw new Error('useResourcesCtx must be used within EpochsProvider');
+  if (!context) throw new Error('useEpochsCtx must be used within EpochsProvider');
   return context;
 };

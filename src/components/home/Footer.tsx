@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
           
           <div className="flex items-center gap-4">
             <a
-              href="https://twitter.com"
+              href="https://x.com/sprout_trading"
               target="_blank"
               rel="noopener noreferrer"
               className="text-emerald-600 hover:text-emerald-700 transition-colors"
@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
               <Twitter size={20} />
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/SproutTrading"
               target="_blank"
               rel="noopener noreferrer"
               className="text-emerald-600 hover:text-emerald-700 transition-colors"

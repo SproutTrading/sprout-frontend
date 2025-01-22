@@ -8,10 +8,13 @@ import TokenDeployForm, { DeploymentConfig } from '../components/common/TokenDep
 import DeploymentLogs from '../components/common/DeploymentLogs';
 import { axiosHttp, API_URL } from '../lib/axios';
 import { usePumpfunLogsStore } from '../store/usePumpfunLogs';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import { VersionedTransaction } from '@solana/web3.js';
 
 const DeployerPage: React.FC = () => {
   const navigate = useNavigate();
-  const { logs, clearLogs } = usePumpfunLogsStore();
+  const { logs, clearLogs, setLogs } = usePumpfunLogsStore();
   const [deploymentState, setDeploymentState] = useState<'idle' | 'deploying' | 'success' | 'error'>('idle');
   const [deployedToken, setDeployedToken] = useState<{
     name: string;
@@ -19,9 +22,13 @@ const DeployerPage: React.FC = () => {
     address: string;
   } | null>(null);
 
+  const { setVisible } = useWalletModal();
+  const { wallet, signIn, publicKey, signAllTransactions } = useWallet();
+
   useEffect(() => {
     if (logs.length > 0) {
-      let successLogs = logs.find(x => x.address);
+      let successLogs = logs.find(x => x.address && x.signature);
+      let instructionsLogsIdx = logs.findIndex(x => x.instructions && x.instructions.length === 2);
       if (successLogs) {
         setDeploymentState('success');
         setDeployedToken({
@@ -30,21 +37,48 @@ const DeployerPage: React.FC = () => {
           address: successLogs.address!
         });
       }
+
+      if (instructionsLogsIdx >= 0) {
+        let instructionsLogs = logs[instructionsLogsIdx];
+        const signInstructions = async () => {
+          const versionedTxs = instructionsLogs.instructions!.map(instructions => VersionedTransaction.deserialize(instructions));
+          const currentSignedTxs = await signAllTransactions!(versionedTxs);
+          setLogs(logs.filter((_, idx) => idx !== instructionsLogsIdx));
+          await axiosHttp.post(`${API_URL}/pumpfun/process`, {
+            id: instructionsLogs.id!,
+            name: instructionsLogs.name!,
+            symbol: instructionsLogs.symbol!,
+            instructions: currentSignedTxs.map(signed => Array.from(signed.serialize())),
+            address: instructionsLogs.address!
+          });
+        }
+        signInstructions();
+      }
     }
   }, [logs]);
 
   useEffect(() => {
-    () => {
+    return () => {
+      setDeploymentState('idle');
+      setDeployedToken(null);
       clearLogs();
     }
   }, []);
 
   const handleDeploy = async (formData: DeploymentConfig) => {
-    try {
-      setDeploymentState('deploying');
-      await axiosHttp.post(`${API_URL}/pumpfun`, formData);
-    } catch (error) {
-      setDeploymentState('error');
+    if (!wallet || !signIn) {
+      setVisible(true);
+    } else {
+      try {
+        setDeploymentState('deploying');
+        let payload = {
+          ...formData,
+          public_key: publicKey?.toString()
+        }
+        await axiosHttp.post(`${API_URL}/pumpfun/request`, payload);
+      } catch (error) {
+        setDeploymentState('error');
+      }
     }
   };
 

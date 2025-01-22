@@ -1,7 +1,20 @@
-import React from 'react';
-import { SproutLeaderboardStatistics } from '../../context/ResourcesContext';
+import React, { useEffect } from 'react';
+import { useResourcesCtx } from '../../context/ResourcesContext';
+import { axiosHttp, API_URL } from '../../lib/axios';
 
-const ContributeSproutView: React.FC<{ statistics: SproutLeaderboardStatistics }> = ({ statistics }) => {
+const ContributeSproutView: React.FC = () => {
+  const { statistics, setStatistics } = useResourcesCtx();
+  useEffect(() => {
+    getGlobalStatistics();
+  }, []);
+
+  const getGlobalStatistics = async () => {
+    let { data: { ok, data: { statistics } } } = await axiosHttp.get(`${API_URL}/leaderboard`);
+    if (ok) {
+      setStatistics(statistics);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative">

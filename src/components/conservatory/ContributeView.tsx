@@ -4,16 +4,14 @@ import ContributeSproutView from './ContributeSproutView';
 import ContributeResources from './ContributeResources';
 import { axiosHttp, API_URL } from '../../lib/axios';
 import { useAuthStore } from '../../store/useAuthStore';
-import { SproutLeaderboardStatistics } from '../../context/ResourcesContext';
 
 interface ContributeViewProps {
   onReturn: () => void;
-  statistics: SproutLeaderboardStatistics
   setRefresh: (input: boolean) => void;
   refresh: boolean;
 }
 
-const ContributeView: React.FC<ContributeViewProps> = ({ onReturn, statistics, setRefresh }) => {
+const ContributeView: React.FC<ContributeViewProps> = ({ onReturn, setRefresh }) => {
   const { profile } = useAuthStore();
 
   const handleContribute = async (type: 'water_contributed' | 'water_non_contributed' | 'fertilizer_contributed' | 'fertilizer_non_contributed' | 'sunshine_contributed' | 'sunshine_non_contributed') => {
@@ -47,7 +45,7 @@ const ContributeView: React.FC<ContributeViewProps> = ({ onReturn, statistics, s
           Return to Conservatory
         </button>
         <div className="space-y-4">
-          <ContributeSproutView statistics={statistics} />
+          <ContributeSproutView />
           <h3 className="text-lg font-semibold text-emerald-800 mb-0 pb-0">Your Resources</h3>
           {!profile && <div className="text-xs">Please log in or create a account to view your contributions.</div>}
           <ContributeResources onContribute={handleContribute} />

@@ -8,20 +8,17 @@ import { useResourceStore } from '../store/useResourceStore';
 import { EpochResourcesStatistics } from './conservatory/EpochProgress';
 import { useAuthStore } from '../store/useAuthStore';
 import { useEpochsCtx } from '../context/EpochsContext';
-import { useResourcesCtx } from '../context/ResourcesContext';
 
 const SproutGrowth: React.FC = () => {
   const { epochs, setEpochs, level, setLevel } = useEpochsCtx();
-  const { statistics, setStatistics } = useResourcesCtx();
   const [token_address, setTokenAddress] = useState<string>();
   const [showContribute, setShowContribute] = useState(false);
   const { profile } = useAuthStore();
 
-  const { setResources, setContributions, contributions, rank, setRank } = useResourceStore();
+  const { water_non_contributed, fertilizer_non_contributed, sunshine_non_contributed, setResources, setContributions, contributions, rank, setRank } = useResourceStore();
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useEffect(() => {
-    getGlobalStatistics();
     getUserResources();
     getResourcesEpochs();
     getSproutAddress();
@@ -29,13 +26,11 @@ const SproutGrowth: React.FC = () => {
 
   useEffect(() => {
     if (refresh) {
-      getGlobalStatistics();
       getUserResources();
       getResourcesEpochs();
       getSproutAddress();
     }
   }, [refresh]);
-
 
   const getResourcesEpochs = async () => {
     let { data: { ok, data: response } } = await axiosHttp.get(`${API_URL}/resources/epochs`);
@@ -58,14 +53,6 @@ const SproutGrowth: React.FC = () => {
     }
   }
 
-  const getGlobalStatistics = async () => {
-    let { data: { ok, data: { statistics } } } = await axiosHttp.get(`${API_URL}/leaderboard`);
-    if (ok) {
-      setStatistics(statistics);
-      setRefresh(false);
-    }
-  }
-
   const getUserResources = async () => {
     let { data: { ok, data: response } } = await axiosHttp.get(`${API_URL}/resources/data`);
     if (ok) {
@@ -77,7 +64,7 @@ const SproutGrowth: React.FC = () => {
   }
 
   if (showContribute) {
-    return <ContributeView statistics={statistics} refresh={refresh} setRefresh={setRefresh} onReturn={() => setShowContribute(false)} />;
+    return <ContributeView refresh={refresh} setRefresh={setRefresh} onReturn={() => setShowContribute(false)} />;
   }
 
   return (
@@ -105,7 +92,7 @@ const SproutGrowth: React.FC = () => {
               </h2>
           }
         </div>
-        <SproutStats stats={statistics} />
+        <SproutStats water={water_non_contributed} fertilizer={fertilizer_non_contributed} sunshine={sunshine_non_contributed} />
       </section>
 
       {/* Contribution buttons */}

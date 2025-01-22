@@ -57,8 +57,7 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
         address: wallet.publicKey!.toString(),
         symbol: token.token.symbol,
         total
-      });
-
+      }); 
     }
   };
 

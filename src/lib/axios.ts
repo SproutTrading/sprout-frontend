@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const API_URL = `http://localhost:8000`;
-export const WS_URL = `ws://localhost:8001`;
+export const API_URL = `https://api.sprout.trading`;
+export const WS_URL = `wss://ws.sprout.trading`;
 
 export const axiosHttp = axios.create({
     baseURL: `${API_URL}`,

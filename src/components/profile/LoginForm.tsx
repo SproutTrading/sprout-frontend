@@ -5,7 +5,7 @@ import RegisterForm from './RegisterForm';
 import { useWallet } from '../../hooks/useWallet';
 import { axiosHttp, API_URL } from '../../lib/axios';
 
-const LoginForm: React.FC<{ displayTitle: boolean }> = ({ displayTitle }) => {
+const LoginForm: React.FC = () => {
   const { connect, signMessage } = useWallet();
   const [showRegister, setShowRegister] = useState(false);
   const [status, setStatus] = useState<'initial' | 'checking' | 'found' | 'not_found'>('initial');
@@ -76,7 +76,7 @@ const LoginForm: React.FC<{ displayTitle: boolean }> = ({ displayTitle }) => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {displayTitle && <div className="text-center mb-8">
+      {<div className="text-center mb-8">
         <h2 className="text-2xl font-semibold text-emerald-800">Sprout.trading Login</h2>
       </div>}
 

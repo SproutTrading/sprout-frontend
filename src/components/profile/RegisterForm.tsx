@@ -33,15 +33,19 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBack }) => {
     setChecking(true);
     await axiosHttp.post(`${API_URL}/oauth/username/check`, { username: display_name.trim() }).then(data => {
       let { ok } = data.data;
-      if (ok) {
-        setAvailability('available');
-      } else {
-        setAvailability('taken');
-      }
+      setTimeout(() => {
+        if (ok) {
+          setAvailability('available');
+        } else {
+          setAvailability('taken');
+        }
+      }, 2000);
     }).catch(_ => {
       setAvailability('taken');
     }).finally(() => {
-      setChecking(false);
+      setTimeout(() => {
+        setChecking(false);
+      }, 2000);
     });
   };
 

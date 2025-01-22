@@ -20,7 +20,7 @@ const ClaimResources: React.FC<{ refresh: boolean, setRefresh: (input: boolean) 
     if (!cooldownEnd) return;
 
     const interval = setInterval(() => {
-      const now = Date.now() + new Date().getTimezoneOffset() * 60000;
+      const now = Date.now();
       if (now >= cooldownEnd) {
         setCooldownEnd(null);
         setTimeLeft('');
