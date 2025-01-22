@@ -6,14 +6,28 @@ import TokenGrid from '../components/farm/TokenGrid';
 import WalletConnection from '../components/farm/WalletConnection';
 import { axiosHttp, API_URL } from '../lib/axios';
 import { usePumpFunTokensStore } from '../store/usePumpfunTokens';
+import { useResourcesCtx } from '../context/ResourcesContext';
 
 const FarmPage: React.FC = () => {
   const { tokens, setTokens } = usePumpFunTokensStore();
+  const { resourceUpdated } = useResourcesCtx();
   const [page, setCurrentPage] = useState(1);
   const [count, setCount] = useState(1);
+
   useEffect(() => {
     getPumpfunFarmTokens();
   }, [page]);
+
+  useEffect(() => {
+    if (resourceUpdated && tokens.length > 0) {
+      setTokens(tokens.map(token => {
+        return {
+          ...token,
+          resources: token.resources && token.resources.id === resourceUpdated.id ? resourceUpdated : token.resources
+        }
+      }))
+    }
+  }, [resourceUpdated]);
 
   const getPumpfunFarmTokens = async () => {
     let { data: { ok, data: { token_data, count, page: currentPage } } } = await axiosHttp.get(`${API_URL}/pumpfun/farm?page=${page}`);

@@ -14,10 +14,11 @@ import { useEpochsCtx } from '../context/EpochsContext';
 import { useResourcesCtx } from '../context/ResourcesContext';
 import { PumpfunLogs, usePumpfunLogsStore } from '../store/usePumpfunLogs';
 import { BuyLogs, useBuyLogsStore } from '../store/useBuyLogsStore';
+import { TokenDataFarmResources } from '../components/widget/TokenWidget';
 
 const AppRoutes: React.FC = () => {
   const { setEpochs } = useEpochsCtx();
-  const { setSprouts, setStatistics } = useResourcesCtx();
+  const { setSprouts, setStatistics, setResourceUpdated } = useResourcesCtx();
   const { socket, reconnect, disconnect } = useSocket();
   const { profile } = useAuthStore();
   const { addLogs } = usePumpfunLogsStore();
@@ -27,10 +28,13 @@ const AppRoutes: React.FC = () => {
       socket.on('connect', () => {
         console.log('Successfully connected');
       })
-      socket.on("updateStatistics", (data: { epochs: EpochResourcesStatistics[], leaderboard: { users: any[], statistics: any } }) => {
+      socket.on("updateStatistics", (data: { epochs: EpochResourcesStatistics[], leaderboard: { users: any[], statistics: any }, resourceUpdated?: TokenDataFarmResources }) => {
         setEpochs(data.epochs);
         setSprouts(data.leaderboard.users);
         setStatistics(data.leaderboard.statistics);
+        if (data.resourceUpdated) {
+          setResourceUpdated(data.resourceUpdated);
+        }
       });
 
       socket.on('pumpfun', (data: PumpfunLogs) => {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { TokenDataFarmResources } from '../components/widget/TokenWidget';
 
 
 export interface SproutUserStatistics {
@@ -27,6 +28,9 @@ interface ResourcesContextType {
   statistics: SproutLeaderboardStatistics,
   setStatistics: (input: SproutLeaderboardStatistics) => void,
 
+  resourceUpdated: TokenDataFarmResources | undefined,
+  setResourceUpdated: (input: TokenDataFarmResources) => void,
+
   loading: boolean,
   setLoading: (input: boolean) => void,
 
@@ -37,6 +41,7 @@ interface ResourcesContextType {
 const ResourcesContext = createContext<ResourcesContextType | undefined>(undefined);
 
 export function ResourcesProvider({ children }: { children: React.ReactNode }) {
+  const [resourceUpdated, setResourceUpdated] = useState<TokenDataFarmResources>();
   const [sprouts, setSprouts] = useState<SproutUserStatistics[]>([]);
   const [statistics, setStatistics] = useState<SproutLeaderboardStatistics>({
     highest: 0,
@@ -49,9 +54,8 @@ export function ResourcesProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
   return (
-    <ResourcesContext.Provider value={{ sprouts, setSprouts, loading, error, setLoading, setError, statistics, setStatistics }}>
+    <ResourcesContext.Provider value={{ sprouts, setSprouts, loading, error, setLoading, setError, statistics, setStatistics, resourceUpdated, setResourceUpdated }}>
       {children}
     </ResourcesContext.Provider>
   );
