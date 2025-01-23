@@ -39,7 +39,7 @@ const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epoch
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-700">Epoch {index + 1}</span>
+                <span className="text-sm font-medium text-gray-700">Epoch {epoch.epoch}</span>
                 <span className="text-xs text-gray-600 font-medium">{epoch.percentage}% Complete</span>
               </div>
 
