@@ -3,7 +3,7 @@ import PurchaseConsole, { LogState } from './PurchaseConsole';
 import { TokenDataFarm } from '../../widget/TokenWidget';
 import { axiosHttp, API_URL } from '../../../lib/axios';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { useWalletModal, WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { VersionedTransaction } from '@solana/web3.js';
 import { useBuyLogsStore } from '../../../store/useBuyLogsStore';
@@ -19,7 +19,8 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
   const [logState, setLogState] = useState<LogState>(null);
   const [logMessage, setLogMessage] = useState('');
   const { profile } = useAuthStore();
-  const wallet = useWallet()
+  const { setVisible } = useWalletModal();
+  const { wallet, signIn, signTransaction, publicKey } = useWallet()
   const { clearBuyLogs, latestLogs } = useBuyLogsStore();
 
   useEffect(() => {
@@ -35,29 +36,31 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
   }, [latestLogs])
 
   const handleBuy = async () => {
-    await wallet.signIn!({});
+    if (!wallet || !signIn) {
+      setVisible(true);
+    } else {
+      const value = parseFloat(solAmount);
+      const tip = parseFloat(jitoTip);
+      const total = value + tip;
 
-    const value = parseFloat(solAmount);
-    const tip = parseFloat(jitoTip);
-    const total = value + tip;
-
-    let { data: { ok, data: { instructions } } } = await axiosHttp.post(`${API_URL}/buy/request`, {
-      tokenId: token.resources.id,
-      tip,
-      value,
-      symbol: token.token.symbol,
-      address: profile!.public_key
-    });
-    if (ok) {
-      const versionedTx = VersionedTransaction.deserialize(instructions);
-      let signed = await wallet.signTransaction!(versionedTx!);
-
-      await axiosHttp.post(`${API_URL}/buy/process`, {
-        instructions: Array.from(signed.serialize()),
-        address: wallet.publicKey!.toString(),
+      let { data: { ok, data: { instructions } } } = await axiosHttp.post(`${API_URL}/buy/request`, {
+        tokenId: token.resources.id,
+        tip,
+        value,
         symbol: token.token.symbol,
-        total
-      }); 
+        address: profile!.public_key
+      });
+      if (ok) {
+        const versionedTx = VersionedTransaction.deserialize(instructions);
+        let signed = await signTransaction!(versionedTx!);
+
+        await axiosHttp.post(`${API_URL}/buy/process`, {
+          instructions: Array.from(signed.serialize()),
+          address: publicKey!.toString(),
+          symbol: token.token.symbol,
+          total
+        });
+      }
     }
   };
 
