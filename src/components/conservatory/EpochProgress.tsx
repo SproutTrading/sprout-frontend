@@ -6,7 +6,8 @@ export interface EpochResourcesStatistics {
   water: number,
   fertilizer: number,
   sunshine: number,
-  percentage: number
+  percentage: number,
+  selected: boolean
 }
 
 const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epochs }) => {
