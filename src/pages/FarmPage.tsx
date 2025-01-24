@@ -64,7 +64,7 @@ const FarmPage: React.FC = () => {
                   <p className="text-sm text-emerald-600">
                     When developers create tokens through the Sprout Deployer, they automatically purchase $25 worth of Sprout v1 tokens and allocate 0.5% of their new token supply. Both the Sprout v1 tokens and new token allocations are stored in our{' '}
                     <a
-                      href="https://solscan.io/account/58t4B4BfPe7b6Wb7QqskSuTogwSnP2fEhu2EEeyVYXTf"
+                      href="https://solscan.io/account/4CzNYKE4naFEznZV81XmErVXMc3VSvhjJDcZf43ArLfB"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-700 hover:text-emerald-800 transition-colors"
