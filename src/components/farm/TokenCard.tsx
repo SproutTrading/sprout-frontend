@@ -92,7 +92,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ token, onBuy, onContribute }) => 
                 <Twitter size={12} className="text-emerald-600" />
                 <span className="font-medium text-emerald-700">Twitter:</span>
               </div>
-              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.twitter ? <a href={token.ipfs.twitter} target='_blank'>{token.ipfs.twitter}</a> : 'N/A'}</span>
+              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.twitter ? <a href={'https://x.com/' + token.ipfs.twitter} target='_blank'>{token.ipfs.twitter}</a> : 'N/A'}</span>
             </div>
             <div className="flex items-center">
               <div className="w-24 flex items-center gap-1.5">
@@ -106,7 +106,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ token, onBuy, onContribute }) => 
                 <MessageCircle size={12} className="text-emerald-600" />
                 <span className="font-medium text-emerald-700">Telegram:</span>
               </div>
-              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.telegram ? <a href={token.ipfs.telegram} target='_blank'>{token.ipfs.telegram}</a> : 'N/A'}</span>
+              <span className="text-emerald-600 text-center flex-1 truncate">{token.ipfs.telegram ? <a href={'https://t.me' + token.ipfs.telegram} target='_blank'>{token.ipfs.telegram}</a> : 'N/A'}</span>
             </div>
             <div className="flex items-center">
               <div className="w-24 flex items-center gap-1.5">
@@ -114,6 +114,13 @@ const TokenCard: React.FC<TokenCardProps> = ({ token, onBuy, onContribute }) => 
                 <span className="font-medium text-emerald-700">Creator:</span>
               </div>
               <span className="text-emerald-600 text-center flex-1"><a href={'https://solscan.io/account/' + token.token.creator} target='_blank'>{formatAddress(token.token.creator)}</a></span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-24 flex items-center gap-1.5">
+                <img className='w-3' src='https://i.imgur.com/x31A0IS.png' />
+                <span className="font-medium text-emerald-700">Contract:</span>
+              </div>
+              <span className="text-emerald-600 text-center flex-1"><a href={'https://solscan.io/token/' + token.token.address} target='_blank'>{formatAddress(token.token.address)}</a></span>
             </div>
           </div>
         </div>

@@ -26,7 +26,11 @@ const PurchaseConsole: React.FC<PurchaseConsoleProps> = ({ state, message }) => 
   return (
     <div className={`p-3 rounded-lg border ${stateStyles[state]} text-sm flex items-start gap-2`}>
       <StateIcon />
-      <span className="flex-1">{message}</span>
+      <span className="flex-1" dangerouslySetInnerHTML={{
+        __html: message,
+      }}>
+      </span>
+
     </div>
   );
 };

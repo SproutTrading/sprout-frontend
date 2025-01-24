@@ -115,14 +115,25 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
         </div>
       </div>
 
-      <button
-        onClick={handleBuy}
-        disabled={!solAmount || parseFloat(solAmount) <= 0}
-        className="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-green-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-      >
-        <img src="https://i.imgur.com/ERV79bv.png" alt="Buy" className="w-4 h-4" />
-        Buy Now
-      </button>
+
+      {
+        !wallet || !signIn ? <button type="button"
+          onClick={handleBuy}
+          className="w-full flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all"
+        >
+          <img src="https://i.imgur.com/k1c0SFG.png" alt="Phantom" className="w-5 h-5" />
+          Sign with Phantom Wallet
+        </button> : <button
+          onClick={handleBuy}
+          disabled={!solAmount || parseFloat(solAmount) <= 0}
+          className="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-green-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <img src="https://i.imgur.com/ERV79bv.png" alt="Buy" className="w-4 h-4" />
+          Buy Now
+        </button>
+      }
+
+
 
       {logState && (
         <PurchaseConsole
