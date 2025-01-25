@@ -352,7 +352,7 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
       </div>
 
       {/* Wallet Connection */}
-      {wallet != undefined && signIn != undefined && profile ? <div className="space-y-3">
+      {profile ? <div className="space-y-3">
         <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 flex items-center gap-2">
           <CheckCircle className="w-5 h-5 text-emerald-500" />
           <span className="text-sm text-emerald-700">
@@ -443,7 +443,7 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={disabled || !profile || !isValidForm() || !wallet || !signIn}
+        disabled={disabled || !profile || !isValidForm()}
         className="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-green-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Deploy Token
