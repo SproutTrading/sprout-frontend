@@ -29,21 +29,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBack }) => {
 
   const handleCheckAvailability = async () => {
     if (!display_name.trim()) return;
-
+    setAvailability(null);
     setChecking(true);
+    let isOk = false;
     await axiosHttp.post(`${API_URL}/oauth/username/check`, { username: display_name.trim() }).then(data => {
       let { ok } = data.data;
-      setTimeout(() => {
-        if (ok) {
-          setAvailability('available');
-        } else {
-          setAvailability('taken');
-        }
-      }, 2000);
+      isOk = ok;
     }).catch(_ => {
       setAvailability('taken');
     }).finally(() => {
       setTimeout(() => {
+        if (isOk) {
+          setAvailability('available');
+        } else {
+          setAvailability('taken');
+        }
         setChecking(false);
       }, 2000);
     });
@@ -82,7 +82,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBack }) => {
 
     try {
       setLoading(true);
-      let signature = await signMessage(nonce);
+      let messageToSign = `Signing this message will register you a gardener ID! ${nonce}`;
+      let signature = await signMessage(messageToSign);
       let { data: { ok, data: response } } = await axiosHttp.post(`${API_URL}/oauth/register`, { address, nonce, signature, username: display_name.trim() });
       if (ok) {
         setRegistrationData({

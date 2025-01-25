@@ -42,7 +42,6 @@ const AppRoutes: React.FC = () => {
       });
 
       socket.on('buyTx', (data: BuyLogs) => {
-        console.log(data);
         setBuyLogs(data);
       })
     } else {

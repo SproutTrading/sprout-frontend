@@ -41,10 +41,10 @@ const LoginForm: React.FC = () => {
     }
 
     try {
-      let signature = await signMessage(nonce);
+      let messageToSign = `Welcome to Sprout.trading. Sign this message to verify your ownership! ${nonce}`;
+      let signature = await signMessage(messageToSign);
       let { data: { ok, data: response } } = await axiosHttp.post(`${API_URL}/oauth`, { address, nonce, signature });
       if (ok) {
-
         const profileData = {
           id: response.id,
           group_id: response.group_id,

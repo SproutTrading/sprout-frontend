@@ -22,20 +22,27 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
   const { setVisible } = useWalletModal();
   const { wallet, signIn, signTransaction, publicKey } = useWallet()
   const { clearBuyLogs, latestLogs } = useBuyLogsStore();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
+    setIsProcessing(false);
     clearBuyLogs();
+    return () => {
+      setIsProcessing(false);
+      clearBuyLogs();
+    }
   }, []);
 
   useEffect(() => {
     if (latestLogs) {
-      console.log(latestLogs);
       setLogState(latestLogs.pending ? 'pending' : (latestLogs.ok ? 'success' : 'error'));
       setLogMessage(latestLogs.message);
     }
   }, [latestLogs])
 
   const handleBuy = async () => {
+    setIsProcessing(false);
+
     if (!wallet || !signIn) {
       setVisible(true);
     } else {
@@ -52,13 +59,23 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
       });
       if (ok) {
         const versionedTx = VersionedTransaction.deserialize(instructions);
-        let signed = await signTransaction!(versionedTx!);
+        setIsProcessing(true);
+        signTransaction!(versionedTx!).then(async signed => {
+          try {
+            await axiosHttp.post(`${API_URL}/buy/process`, {
+              instructions: Array.from(signed.serialize()),
+              address: publicKey!.toString(),
+              symbol: token.token.symbol,
+              total
+            });
+          } catch (err) {
 
-        await axiosHttp.post(`${API_URL}/buy/process`, {
-          instructions: Array.from(signed.serialize()),
-          address: publicKey!.toString(),
-          symbol: token.token.symbol,
-          total
+          }
+        }).catch(err => {
+          setLogState('error');
+          setLogMessage(err);
+        }).finally(() => {
+
         });
       }
     }
@@ -133,9 +150,7 @@ const BuyPanel: React.FC<BuyPanelProps> = ({ token }) => {
         </button>
       }
 
-
-
-      {logState && (
+      {isProcessing && logState && (
         <PurchaseConsole
           state={logState}
           message={logMessage}
