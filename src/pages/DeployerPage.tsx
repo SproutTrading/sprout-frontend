@@ -42,15 +42,19 @@ const DeployerPage: React.FC = () => {
         let instructionsLogs = logs[instructionsLogsIdx];
         const signInstructions = async () => {
           const versionedTxs = instructionsLogs.instructions!.map(instructions => VersionedTransaction.deserialize(instructions));
-          const currentSignedTxs = await signAllTransactions!(versionedTxs);
-          setLogs(logs.filter((_, idx) => idx !== instructionsLogsIdx));
-          await axiosHttp.post(`${API_URL}/pumpfun/process`, {
-            id: instructionsLogs.id!,
-            name: instructionsLogs.name!,
-            symbol: instructionsLogs.symbol!,
-            instructions: currentSignedTxs.map(signed => Array.from(signed.serialize())),
-            address: instructionsLogs.address!
-          });
+          signAllTransactions!(versionedTxs).then(async currentSignedTxs => {
+            setLogs(logs.filter((_, idx) => idx !== instructionsLogsIdx));
+            await axiosHttp.post(`${API_URL}/pumpfun/process`, {
+              id: instructionsLogs.id!,
+              name: instructionsLogs.name!,
+              symbol: instructionsLogs.symbol!,
+              instructions: currentSignedTxs.map(signed => Array.from(signed.serialize())),
+              address: instructionsLogs.address!
+            });
+          }).catch(err => {
+            setDeploymentState('error');
+            setDeployedToken(null);
+          })
         }
         signInstructions();
       }
@@ -66,19 +70,29 @@ const DeployerPage: React.FC = () => {
   }, []);
 
   const handleDeploy = async (formData: DeploymentConfig) => {
+    setDeployedToken(null);
+    clearLogs();
     if (!wallet || !signIn) {
       setVisible(true);
     } else {
-      try {
-        setDeploymentState('deploying');
-        let payload = {
-          ...formData,
-          public_key: publicKey?.toString()
+      signIn().then(r => {
+        try {
+          setDeploymentState('deploying');
+          let payload = {
+            ...formData,
+            public_key: publicKey?.toString()
+          }
+          axiosHttp.post(`${API_URL}/pumpfun/request`, payload).then(_ => {
+
+          }).catch(err => {
+            setDeploymentState('error');
+          });
+        } catch (error) {
+          setDeploymentState('error');
         }
-        await axiosHttp.post(`${API_URL}/pumpfun/request`, payload);
-      } catch (error) {
-        setDeploymentState('error');
-      }
+      }).catch(_ => {
+
+      });
     }
   };
 
@@ -98,6 +112,8 @@ const DeployerPage: React.FC = () => {
               </div>
               {deploymentState === 'idle' ? (
                 <TokenDeployForm
+                  wallet={wallet}
+                  signIn={signIn}
                   onDeploy={handleDeploy}
                   disabled={deploymentState === 'deploying' as any}
                 />

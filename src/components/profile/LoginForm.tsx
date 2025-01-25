@@ -6,11 +6,10 @@ import { useWallet } from '../../hooks/useWallet';
 import { axiosHttp, API_URL } from '../../lib/axios';
 
 const LoginForm: React.FC = () => {
-  const { connect, signMessage } = useWallet();
+  const { publicKey, connect, signMessage } = useWallet();
   const [showRegister, setShowRegister] = useState(false);
   const [status, setStatus] = useState<'initial' | 'checking' | 'found' | 'not_found'>('initial');
   const { setProfile } = useAuthStore();
-  const { publicKey } = useWallet();
 
   const handleConnect = async () => {
     setStatus('checking');

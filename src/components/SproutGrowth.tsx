@@ -80,15 +80,11 @@ const SproutGrowth: React.FC = () => {
 
       <section>
         <div className="flex items-center gap-2 mb-4">
-          <div className="relative w-2 h-2">
-            <div className="absolute inset-0 bg-emerald-400 rounded-full animate-[pulse_2s_infinite]" />
-            <div className="absolute inset-0 bg-emerald-400 rounded-full animate-[ping_2s_infinite]" />
-          </div>
+          <img className='w-4' src='https://i.imgur.com/hmk6l58.png' />
           {
             !profile ? <h2 className="text-lg font-semibold text-emerald-800">User Contributions</h2> :
-              <h2 className="text-lg font-semibold text-emerald-800">
-                Gardener #{String(profile.id).padStart(5, '0')} -
-                Contributions {contributions} - Rank #{rank}
+              <h2 className="text-sm text-emerald-800">
+                Gardener #{String(profile.id).padStart(5, '0')} | Contributions {contributions} | Rank #{rank}
               </h2>
           }
         </div>
