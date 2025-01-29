@@ -7,6 +7,7 @@ import WalletConnection from '../components/farm/WalletConnection';
 import { axiosHttp, API_URL } from '../lib/axios';
 import { usePumpFunTokensStore } from '../store/usePumpfunTokens';
 import { useResourcesCtx } from '../context/ResourcesContext';
+import LeafDecoration from '../components/home/LeafDecoration';
 
 const FarmPage: React.FC = () => {
   const { tokens, setTokens } = usePumpFunTokensStore();
@@ -44,6 +45,11 @@ const FarmPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+
+      <LeafDecoration position="left" />
+      <LeafDecoration position="right" />
+
+
       <Background />
       <Header />
 

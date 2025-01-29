@@ -4,12 +4,11 @@ const AllocationPieChart: React.FC = () => {
   // Calculate stroke-dasharray values based on percentages (circumference = 2πr = 2 * π * 40 ≈ 251.33)
   const circumference = 251.33;
   const segments = [
-    { percent: 3, color: 'rgb(251 191 36)', label: '1st: 3.00%' },
-    { percent: 2, color: 'rgb(156 163 175)', label: '2nd: 2.00%' },
-    { percent: 1.5, color: 'rgb(249 115 22)', label: '3rd: 1.50%' },
-    { percent: 5.25, color: 'rgb(147 51 234)', label: '4-10: 5.25%' },
-    { percent: 5.25, color: 'rgb(59 130 246)', label: '11-25: 5.25%' },
-    { percent: 3, color: 'rgb(16 185 129)', label: '26-50: 3.00%' }
+    { percent: 10, color: 'rgb(16 185 129)', label: '1st: 10.00%' },
+    { percent: 7.5, color: 'rgb(52 211 153)', label: '2nd: 7.50%' },
+    { percent: 5, color: 'rgb(110 231 183)', label: '3rd: 5.00%' },
+    { percent: 2.5, color: 'rgb(167 243 208)', label: '4th: 2.50%' },
+    { percent: 75, color: 'rgb(209 250 229)', label: '5-50: 75%' },
   ];
 
   let currentOffset = 0;
@@ -20,7 +19,7 @@ const AllocationPieChart: React.FC = () => {
         <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
           {segments.map((segment, index) => {
             const offset = currentOffset;
-            const dashArray = (segment.percent / 20) * circumference;
+            const dashArray = (segment.percent / 100) * circumference;
             currentOffset += dashArray;
 
             return (
@@ -44,8 +43,8 @@ const AllocationPieChart: React.FC = () => {
       <div className="grid grid-cols-2 gap-x-8 gap-y-2">
         {segments.map((segment, index) => (
           <div key={index} className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full" 
+            <div
+              className="w-3 h-3 rounded-full"
               style={{ backgroundColor: segment.color }}
             />
             <span className="text-sm text-gray-700">{segment.label}</span>

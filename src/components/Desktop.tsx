@@ -32,12 +32,12 @@ const Desktop: React.FC = () => {
   return (
     <div className="h-screen w-screen overflow-hidden">
       <Background />
-      
+
       <div ref={desktopRef} className="absolute inset-0 bottom-12">
         {/* Desktop Icons Layer */}
         <div className="relative z-10 p-4 grid grid-cols-2 gap-8 w-fit pointer-events-auto">
           <div className="space-y-8">
-            <DesktopIcon 
+            <DesktopIcon
               icon={SproutIcon}
               label="Conservatory"
               onClick={() => {
@@ -45,7 +45,7 @@ const Desktop: React.FC = () => {
                 bringToFront('sprout');
               }}
             />
-            <DesktopIcon 
+            <DesktopIcon
               icon={ProfileIcon}
               label="Profile"
               onClick={() => {
@@ -53,12 +53,12 @@ const Desktop: React.FC = () => {
                 bringToFront('profile');
               }}
             />
-            <DesktopIcon 
+            <DesktopIcon
               icon={DeployerIcon}
               label="Sprout Deployer"
               onClick={() => navigate('/deployer')}
             />
-            <DesktopIcon 
+            <DesktopIcon
               icon={FarmIcon}
               label="Farm"
               onClick={() => navigate('/farm')}
@@ -66,24 +66,25 @@ const Desktop: React.FC = () => {
           </div>
 
           <div className="space-y-8">
-            <DesktopIcon 
+            <DesktopIcon
               icon={DocsIcon}
               label="Documentation"
               onClick={() => navigate('/docs')}
             />
-            <DesktopIcon 
+            <DesktopIcon
               icon={LeaderboardIcon}
               label="Leaderboard"
               onClick={() => navigate('/leaderboard')}
             />
-            <DesktopIcon 
+            <DesktopIcon
               icon={V2Icon}
-              label="Sprout v2"
+              label="Bloom Stages"
               onClick={() => {
                 handleToggleWindow('v2', true);
                 bringToFront('v2');
               }}
             />
+
           </div>
         </div>
 
@@ -116,7 +117,7 @@ const Desktop: React.FC = () => {
           </Window>
 
           <Window
-            title="Sprout v2"
+            title="Bloom Stages"
             isOpen={windows.v2 && !minimized.v2}
             onClose={() => handleToggleWindow('v2', false)}
             onMinimize={() => handleMinimize('v2')}

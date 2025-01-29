@@ -6,6 +6,7 @@ import Header from '../components/home/Header';
 import Footer from '../components/home/Footer';
 import { axiosHttp, API_URL } from '../lib/axios';
 import { useResourcesCtx } from '../context/ResourcesContext';
+import LeafDecoration from '../components/home/LeafDecoration';
 
 const LeaderboardPage: React.FC = () => {
   const { sprouts, loading, error, setLoading, setSprouts, statistics, setStatistics } = useResourcesCtx();
@@ -26,6 +27,11 @@ const LeaderboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+
+      <LeafDecoration position="left" />
+      <LeafDecoration position="right" />
+
+
       <Background />
       <Header />
 

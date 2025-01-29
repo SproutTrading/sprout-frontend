@@ -2,17 +2,20 @@ import React from 'react';
 import { CheckCircle2 } from 'lucide-react';
 
 export interface EpochResourcesStatistics {
-  epoch: number,
+  epoch: string,
   water: number,
   fertilizer: number,
   sunshine: number,
+  progress: number,
   percentage: number,
   selected: boolean
+  completed: boolean
 }
 
 const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epochs }) => {
-  const RESOURCE_TARGET = 100;
   const WATER_RESOURCE_TARGET = 250;
+  const FERTILIZER_RESOURCE_TARGET = 100;
+  const SUNSHINE_RESOURCE_TARGET = 100;
 
   return (
     <div className="space-y-3">
@@ -78,12 +81,12 @@ const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epoch
                       <img src="https://i.imgur.com/oZHaXEN.png" alt="Fertilizer" className="w-3 h-3" />
                       <span className="text-stone-600">Fertilizer</span>
                     </div>
-                    <span className="text-stone-600">{epoch.fertilizer}/{RESOURCE_TARGET > epoch.fertilizer ? RESOURCE_TARGET : '∞'}</span>
+                    <span className="text-stone-600">{epoch.fertilizer}/{FERTILIZER_RESOURCE_TARGET > epoch.fertilizer ? FERTILIZER_RESOURCE_TARGET : '∞'}</span>
                   </div>
                   <div className="h-1.5 bg-white/50 rounded-sm overflow-hidden">
                     <div
                       className="h-full bg-stone-500 transition-all duration-500 ease-out"
-                      style={{ width: `${(epoch.fertilizer / RESOURCE_TARGET) * 100}%` }}
+                      style={{ width: `${(epoch.fertilizer / FERTILIZER_RESOURCE_TARGET) * 100}%` }}
                     />
                   </div>
                 </div>
@@ -94,12 +97,12 @@ const EpochProgress: React.FC<{ epochs: EpochResourcesStatistics[] }> = ({ epoch
                       <img src="https://i.imgur.com/SpwFpMe.png" alt="Sunshine" className="w-3 h-3" />
                       <span className="text-amber-600">Sunshine</span>
                     </div>
-                    <span className="text-amber-600">{epoch.sunshine}/{RESOURCE_TARGET > epoch.sunshine ? RESOURCE_TARGET : '∞'}</span>
+                    <span className="text-amber-600">{epoch.sunshine}/{SUNSHINE_RESOURCE_TARGET > epoch.sunshine ? SUNSHINE_RESOURCE_TARGET : '∞'}</span>
                   </div>
                   <div className="h-1.5 bg-white/50 rounded-sm overflow-hidden">
                     <div
                       className="h-full bg-amber-500 transition-all duration-500 ease-out"
-                      style={{ width: `${(epoch.sunshine / RESOURCE_TARGET) * 100}%` }}
+                      style={{ width: `${(epoch.sunshine / SUNSHINE_RESOURCE_TARGET) * 100}%` }}
                     />
                   </div>
                 </div>

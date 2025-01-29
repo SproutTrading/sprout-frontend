@@ -6,7 +6,7 @@ const RegisteringSection: React.FC = () => {
     <div className="space-y-8 animate-[fadeIn_0.3s_ease-out]">
       <div className="p-4 bg-gradient-to-br from-emerald-50 to-white rounded-lg border border-emerald-100">
         <p className="text-emerald-600 leading-relaxed">
-          Welcome to Sprout! Creating your gardener profile is the first step to participating in our unique ecosystem. 
+          Welcome to Sprout! Creating your gardener profile is the first step to participating in our unique ecosystem.
           Follow these simple steps to set up your profile and start contributing to our community sprout.
         </p>
       </div>
@@ -15,7 +15,7 @@ const RegisteringSection: React.FC = () => {
         <h2 className="text-xl font-semibold text-emerald-800">
           Registration Process
         </h2>
-        
+
         <div className="grid gap-4">
           <div className="p-4 bg-white/50 rounded-lg border border-emerald-100 hover:border-emerald-200 transition-colors">
             <div>
@@ -71,7 +71,7 @@ const RegisteringSection: React.FC = () => {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                  Initial resource allocation
+                  Initial resource allocation after claiming
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>

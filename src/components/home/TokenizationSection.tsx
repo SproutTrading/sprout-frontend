@@ -52,8 +52,9 @@ const TokenizationSection: React.FC = () => {
             <span className="text-amber-600">sunshine</span>
           </span>
           , with new resources available to claim every hour. After 3 Solana epochs, if we meet
-          our resource requirements, the sprout will bloom into sprout v2 (still a secret!) - with 20% of the supply distributed
-          to our top contributors based on their position in the leaderboards.
+          our resource requirements, the sprout will enter its first Bloom Stage - distributing 7.5% of our reserved token supply to our top contributors
+          based on their position in the leaderboards. Each subsequent Bloom Stage will distribute 50% of remaining reserved rewards,
+          creating an ongoing incentive for active participation.
         </p>
       </div>
 

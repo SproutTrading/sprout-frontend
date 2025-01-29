@@ -5,6 +5,8 @@ import Header from '../components/home/Header';
 import Footer from '../components/home/Footer';
 import { DOCS_SECTIONS } from '../components/docs/docsSections';
 import DocsContent from '../components/docs/DocsContent';
+import LeafDecoration from '../components/home/LeafDecoration';
+
 
 const DocsPage: React.FC = () => {
   const location = useLocation();
@@ -13,9 +15,13 @@ const DocsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative">
+
+      <LeafDecoration position="left" />
+      <LeafDecoration position="right" />
+
       <Background />
       <Header />
-      
+
       <div className="relative z-10 pt-24 pb-24">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex gap-8 h-[calc(100vh-12rem)]">
@@ -28,16 +34,15 @@ const DocsPage: React.FC = () => {
                     {DOCS_SECTIONS.map((section) => {
                       const { Icon } = section;
                       const isActive = currentPath === section.path;
-                      
+
                       return (
                         <button
                           key={section.id}
                           onClick={() => navigate(`/docs/${section.path}`)}
-                          className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
-                            isActive
-                              ? 'bg-emerald-100 text-emerald-900 shadow-sm'
-                              : 'text-emerald-700 hover:bg-emerald-50'
-                          }`}
+                          className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${isActive
+                            ? 'bg-emerald-100 text-emerald-900 shadow-sm'
+                            : 'text-emerald-700 hover:bg-emerald-50'
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <Icon size={18} className={isActive ? 'text-emerald-600' : 'text-emerald-500'} />
