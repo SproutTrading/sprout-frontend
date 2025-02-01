@@ -67,7 +67,7 @@ const TokenWidget: React.FC = () => {
 
   const getSproutStatistics = async () => {
     let { data: { ok, data: response } } = await axiosHttp.get(`${API_URL}/token/sprout/statistics`);
-    if (ok) {
+    if (ok && response && JSON.stringify(response) !== '{}') {
       setTokenData(response);
     }
   }
