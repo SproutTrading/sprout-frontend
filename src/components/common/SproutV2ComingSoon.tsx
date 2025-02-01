@@ -1,43 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SproutIcon } from 'lucide-react';
-import EpochProgress, { EpochResourcesStatistics } from '../conservatory/EpochProgress';
+import EpochProgress from '../conservatory/EpochProgress';
+import { useEpochsCtx } from '../../context/EpochsContext';
 
 const SproutV2ComingSoon: React.FC = () => {
   const navigate = useNavigate();
-
-  const epochs: EpochResourcesStatistics[] = [
-    {
-      epoch: 'Epoch 1',
-      water: 100,
-      fertilizer: 100,
-      sunshine: 100,
-      progress: 100,
-      percentage: 100,
-      selected: false,
-      completed: true
-    },
-    {
-      epoch: 'Epoch 2',
-      water: 45,
-      fertilizer: 20,
-      sunshine: 25,
-      progress: 30,
-      percentage: 30,
-      selected: false,
-      completed: false
-    },
-    {
-      epoch: 'Epoch 3',
-      water: 0,
-      fertilizer: 0,
-      sunshine: 0,
-      progress: 0,
-      percentage: 0,
-      selected: false,
-      completed: false
-    }
-  ];
+  const { epochs } = useEpochsCtx();
 
   return (
     <div className="h-full flex flex-col p-8">
