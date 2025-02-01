@@ -89,7 +89,12 @@ const ConservatorySection: React.FC = () => {
 
           <div className="p-4 bg-white/50 rounded-lg border border-emerald-100">
             <div>
-              <h3 className="font-medium text-emerald-800 mb-1">Bloom Stage Rewards</h3>
+              <h3 className="font-medium text-emerald-800 mb-1 flex items-center gap-2">
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <img src="/images/bloom-stage-rewards.png" alt="Bloom Stage Rewards" className="w-4 h-4" />
+                </div>
+                Bloom Stage Rewards
+              </h3>
               <p className="text-sm text-emerald-600">
                 15% of the total Sprout V1 token supply (150,000,000 tokens) is reserved for Bloom Stage rewards, locked securely on Streamflow. After completing three growth stages, it will bloom and 50% of the remaining reward pool is distributed to the top 50 contributors, this cycle will repeat forever. Continously using 50% of the remaining reward pool to distribute to the top 50 contributors.
               </p>

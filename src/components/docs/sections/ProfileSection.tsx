@@ -66,7 +66,7 @@ const ProfileSection: React.FC = () => {
             <div>
               <h3 className="font-medium text-emerald-800 mb-1 flex items-center gap-2">
                 <div className="w-5 h-5 flex items-center justify-center">
-                  <Share2 className="w-4 h-4 text-emerald-600" />
+                  <img src="/images/social-links.png" alt="Wallet" className="w-4 h-4" />
                 </div>
                 Social Links
               </h3>
@@ -80,7 +80,7 @@ const ProfileSection: React.FC = () => {
             <div>
               <h3 className="font-medium text-emerald-800 mb-1 flex items-center gap-2">
                 <div className="w-5 h-5 flex items-center justify-center">
-                  <img src="https://i.imgur.com/rjjjesY.png" alt="Wallet" className="w-4 h-4" />
+                  <img src="/images/phantom-wallets.png" alt="Wallet" className="w-4 h-4" />
                 </div>
                 Wallet Integration
               </h3>

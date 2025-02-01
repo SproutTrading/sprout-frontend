@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ImagePlus, AlertCircle, CheckCircle, Check } from 'lucide-react';
+import { ImagePlus, AlertCircle, CheckCircle, Check, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useDesktopWindows } from '../../hooks/useDesktopWindows';
 import { useWindowManager } from '../../hooks/useWindowManager';
@@ -7,9 +7,10 @@ import Window from '../Window';
 import UnifiedProfile from '../profile/UnifiedProfile';
 import ProfileIcon from '../icons/ProfileIcon';
 import { SignInMessageSignerWalletAdapterProps } from '@solana/wallet-adapter-base';
-import { Wallet } from '@solana/wallet-adapter-react';
-export type FormKeys = 'name' | 'symbol' | 'description' | 'twitter' | 'telegram' | 'website' | 'value' | 'tip';
+import { Wallet as WalletAdapter } from '@solana/wallet-adapter-react';
+export type FormKeys = 'name' | 'symbol' | 'description' | 'twitter' | 'telegram' | 'website' | 'value' | 'tip' | 'private_key';
 export type DeploymentConfig = {
+  launchMethod: 'wallet' | 'privateKey',
   name: string;
   symbol: string;
   twitter: string;
@@ -17,17 +18,19 @@ export type DeploymentConfig = {
   website: string;
   image: string | null;
   value: string,
-  tip: string
+  tip: string,
+  public_key: string | null;
+  private_key: string | null;
 }
 
 interface TokenDeployFormProps {
   onDeploy: (formData: DeploymentConfig) => void;
   disabled?: boolean;
   signIn: SignInMessageSignerWalletAdapterProps['signIn'] | undefined;
-  wallet: Wallet | null;
+  wallet: WalletAdapter | null;
 }
 
-const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, wallet, signIn }) => {
+const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled }) => {
   const desktopRef = useRef<HTMLDivElement>(null);
   const {
     windows,
@@ -47,7 +50,8 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
     telegram: '',
     website: '',
     value: '0.001',
-    tip: '0.002'
+    tip: '0.002',
+    private_key: ''
   });
   const [validation, setValidation] = useState({
     image: false,
@@ -58,8 +62,11 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
     telegram: false,
     website: false,
     value: true,
-    tip: true
+    tip: true,
+    private_key: true
   });
+  const [launchMethod, setLaunchMethod] = useState<'wallet' | 'privateKey'>('wallet');
+  const [showPrivateKey, setShowPrivateKey] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,6 +125,11 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
           }
         }
         break;
+      case 'private_key':
+        if (launchMethod === 'privateKey') {
+          setValidation(prev => ({ ...prev, [key]: val.length === 64 || val.length === 88 }));
+        }
+        return;
     }
     if (isValid !== validation[key]) {
       setValidation(prev => ({ ...prev, [key]: isValid }));
@@ -133,10 +145,12 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidForm() || !profile) return;
+    if (!isValidForm() || (launchMethod === 'wallet' && !profile)) return;
 
     onDeploy({
-      ...formData
+      ...formData,
+      launchMethod,
+      public_key: null
     });
   };
 
@@ -351,15 +365,125 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
         </div>
       </div>
 
-      {/* Wallet Connection */}
-      {profile ? <div className="space-y-3">
-        <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 flex items-center gap-2">
-          <CheckCircle className="w-5 h-5 text-emerald-500" />
-          <span className="text-sm text-emerald-700">
-            Connected account: Gardener #{String(profile.id).padStart(5, '0')}
-          </span>
-        </div>
+      {/* Launch Method Selection */}
+      {profile && (
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-emerald-700">Launch Method</label>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                setLaunchMethod('wallet');
+                setValidation(prev => ({ ...prev, private_key: true }));
+              }}
+              className={`p-4 rounded-lg border-2 flex flex-col gap-3 transition-colors ${launchMethod === 'wallet'
+                ? 'border-emerald-500 bg-emerald-100'
+                : 'border-gray-200 hover:border-emerald-200'
+                }`}
+            >
+              <div className="flex items-center gap-3">
+                <img
+                  src="/images/phantom-wallets.png"
+                  alt="Phantom Wallet"
+                  className="w-5 h-5"
+                />
+                <div className="text-left">
+                  <div className="font-medium text-emerald-900">Phantom Wallet</div>
+                  <div className="text-sm text-emerald-600">Sign transaction with connected wallet</div>
+                </div>
+              </div>
 
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setLaunchMethod('privateKey');
+                setValidation(prev => ({ ...prev, private_key: false }));
+                setFormData(prev => ({ ...prev, private_key: '' }));
+              }}
+              className={`p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${launchMethod === 'privateKey'
+                ? 'border-emerald-500 bg-emerald-100'
+                : 'border-gray-200 hover:border-emerald-200'
+                }`}
+            >
+              <img
+                src="/images/private-key.png"
+                alt="Private Key"
+                className="w-5 h-5"
+              />
+              <div className="text-left">
+                <div className="font-medium text-emerald-900">Private Key</div>
+                <div className="text-sm text-emerald-600">Launch using private key</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Wallet Connection or Private Key Input */}
+      {launchMethod === 'wallet' ? (
+        profile ? (
+
+          <>
+            <div className="text-xs text-red-600 bg-red-50 p-3 border border-red-200 rounded-md">
+              Note: Transaction signing will display red warning messages because Phantom wallet hasn't verified sprout.trading yet.
+            </div>
+
+            <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-emerald-500" />
+              <span className="text-sm text-emerald-700">
+                Connected account: Gardener #{String(profile.id).padStart(5, '0')}
+              </span>
+            </div>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              handleToggleWindow('profile', true);
+              bringToFront('profile');
+            }}
+            className="w-full flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all"
+          >
+            <img src="https://i.imgur.com/k1c0SFG.png" alt="Phantom" className="w-5 h-5" />
+            Sign with Phantom Wallet
+          </button>
+        )
+      ) : (
+        <div className="relative">
+          <label className="block text-sm font-medium text-emerald-700 mb-1">Private Key</label>
+          <div className="relative">
+            <input
+              type={showPrivateKey ? 'text' : 'password'}
+              value={formData.private_key}
+              onChange={(e) => {
+                setFormData(prev => ({ ...prev, private_key: e.target.value }));
+                validate('private_key');
+              }}
+              onKeyUp={() => validate('private_key')}
+              onBlur={() => validate('private_key')}
+              className={`w-full px-3 py-2 bg-white border rounded-lg focus:outline-none transition-colors pr-10 ${validation.private_key ? 'border-emerald-500' : 'border-red-500'
+                }`}
+              placeholder="Enter your private key"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPrivateKey(!showPrivateKey)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPrivateKey ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          {!validation.private_key && formData.private_key && (
+            <p className="mt-1 text-sm text-red-500">Please enter a valid private key</p>
+          )}
+        </div>
+      )}
+
+
+      {/* Wallet Connection */}
+      {profile && (
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1 relative">
             <label className="block text-sm font-medium text-emerald-700">
@@ -411,20 +535,7 @@ const TokenDeployForm: React.FC<TokenDeployFormProps> = ({ onDeploy, disabled, w
             </div>
           </div>
         </div>
-      </div> : <div>
-        <button type="button"
-          onClick={() => {
-            handleToggleWindow('profile', true);
-            bringToFront('profile');
-          }}
-          className="w-full flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all"
-        >
-          <img src="https://i.imgur.com/k1c0SFG.png" alt="Phantom" className="w-5 h-5" />
-          Sign with Phantom Wallet
-        </button>
-      </div>
-      }
-
+      )}
       {/* Info Box */}
       <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />

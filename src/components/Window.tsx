@@ -16,12 +16,12 @@ interface WindowProps {
   onFocus: () => void;
 }
 
-const Window: React.FC<WindowProps> = ({ 
-  title, 
-  isOpen, 
-  onClose, 
-  onMinimize, 
-  icon: Icon, 
+const Window: React.FC<WindowProps> = ({
+  title,
+  isOpen,
+  onClose,
+  onMinimize,
+  icon: Icon,
   children,
   size = 'normal',
   containerRef,
@@ -30,7 +30,7 @@ const Window: React.FC<WindowProps> = ({
 }) => {
   const windowRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
-  const windowSize = size === 'large' 
+  const windowSize = size === 'large'
     ? { width: 1200, height: 800 }
     : { width: 750, height: 500 };
 
@@ -61,27 +61,27 @@ const Window: React.FC<WindowProps> = ({
 
   if (!isOpen) return null;
 
-  const windowSizeClass = size === 'large' 
-    ? 'w-[1200px] h-[800px]' 
+  const windowSizeClass = size === 'large'
+    ? 'w-[1200px] h-[800px]'
     : 'w-[750px] h-[500px]';
 
   return (
-    <div 
-      className="absolute inset-0 pointer-events-none"
+    <div
+      className="absolute inset-0 flex items-center justify-center pointer-events-none"
       style={{ zIndex }}
     >
-      <Draggable 
-        handle=".vista-titlebar" 
+      <Draggable
+        handle=".vista-titlebar"
         nodeRef={windowRef}
         bounds="parent"
-        position={position}
+        defaultPosition={position}
         onDrag={handleDrag}
         onStart={handleFocus}
       >
-        <div 
-          ref={windowRef} 
+        <div
+          ref={windowRef}
           className={`vista-window ${windowSizeClass} pointer-events-auto`}
-          style={{ 
+          style={{
             maxHeight: 'calc(100% - 32px)',
             maxWidth: 'calc(100% - 32px)',
             opacity: mounted ? 1 : 0,
@@ -96,7 +96,7 @@ const Window: React.FC<WindowProps> = ({
               <span>{title}</span>
             </div>
             <div className="flex items-center gap-1">
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onMinimize();
@@ -105,7 +105,7 @@ const Window: React.FC<WindowProps> = ({
               >
                 <Minus size={16} />
               </button>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onClose();

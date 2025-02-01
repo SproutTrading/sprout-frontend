@@ -20,11 +20,11 @@ const DeploymentLogs: React.FC<DeploymentLogsProps> = ({ state, logs }) => {
     error: () => <XCircle className="w-5 h-5 text-red-500" />
   }[state];
 
-  // Function to determine if a log entry is completed
-  const isCompleted = (log: PumpfunLogs, index: number) => {
-    if (state === 'error') return index < logs.length - 1;
-    if (state === 'success') return true;
-    return index < logs.length - 1;
+  const getErrorMessage = (log: PumpfunLogs) => {
+    if (log.message.includes('User rejected')) {
+      return 'Deployment failed: User cancelled confirm message';
+    }
+    return log.message;
   };
 
   return (
@@ -41,23 +41,23 @@ const DeploymentLogs: React.FC<DeploymentLogsProps> = ({ state, logs }) => {
         {logs.map((log, index) => (
           <div
             key={index}
-            className={`flex items-center gap-2 text-sm font-mono px-3 py-1.5 rounded ${isCompleted(log, index)
-              ? 'bg-emerald-50 text-emerald-700'
-              : state === 'error' && index === logs.length - 1
-                ? 'bg-red-50 text-red-700'
+            className={`flex items-center gap-2 text-sm font-mono px-3 py-1.5 rounded ${state === 'error' && index === logs.length - 1
+              ? 'bg-red-50 text-red-700'
+              : (index < logs.length - 1 || (log.ok && log.signature && log.address))
+                ? 'bg-emerald-50 text-emerald-700'
                 : 'bg-black/5 text-gray-700'
               }`}
           >
-            {isCompleted(log, index) && (
+            {index < logs.length - 1 && (
               <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
             )}
             {state === 'error' && index === logs.length - 1 && (
               <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
             )}
-            {!isCompleted(log, index) && state !== 'error' && (
-              <Loader2 className="w-4 h-4 text-blue-500 animate-spin flex-shrink-0" />
+            {!state.includes('error') && index === logs.length - 1 && (
+              (log.ok && log.signature && log.address) ? <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" /> : <Loader2 className="w-4 h-4 text-blue-500 animate-spin flex-shrink-0" />
             )}
-            <span>{log.message}</span>
+            <span>{state === 'error' ? getErrorMessage(log) : log.message}</span>
           </div>
         ))}
       </div>

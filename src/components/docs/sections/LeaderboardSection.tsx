@@ -45,7 +45,7 @@ const LeaderboardSection: React.FC = () => {
             <div>
               <h3 className="font-medium text-emerald-800 mb-1 flex items-center gap-2">
                 <div className="w-5 h-5 flex items-center justify-center">
-                  <img src="https://i.imgur.com/rjjjesY.png" alt="Rewards" className="w-4 h-4" />
+                  <img src="/images/bloom-stage-rewards.png" alt="Bloom Stage Rewards" className="w-4 h-4" />
                 </div>
                 Bloom Stage Rewards
               </h3>

@@ -72,26 +72,38 @@ const DeployerPage: React.FC = () => {
   const handleDeploy = async (formData: DeploymentConfig) => {
     setDeployedToken(null);
     clearLogs();
-    if (!wallet || !signIn) {
-      setVisible(true);
-    } else {
-      signIn().then(r => {
-        try {
-          setDeploymentState('deploying');
-          let payload = {
-            ...formData,
-            public_key: publicKey?.toString()
-          }
-          axiosHttp.post(`${API_URL}/pumpfun/request`, payload).then(_ => {
 
-          }).catch(err => {
+    if (formData.launchMethod === 'wallet') {
+      if (!wallet || !signIn) {
+        setVisible(true);
+      } else {
+        signIn().then(r => {
+          try {
+            setDeploymentState('deploying');
+            let payload = {
+              ...formData,
+              public_key: publicKey?.toString()
+            }
+            axiosHttp.post(`${API_URL}/pumpfun/request`, payload).then(_ => {
+
+            }).catch(err => {
+              setDeploymentState('error');
+            });
+          } catch (error) {
             setDeploymentState('error');
-          });
-        } catch (error) {
-          setDeploymentState('error');
-        }
-      }).catch(_ => {
+          }
+        }).catch(_ => {
 
+        });
+      }
+    } else {
+      setDeploymentState('deploying');
+      let payload = {
+        ...formData 
+      }
+      axiosHttp.post(`${API_URL}/pumpfun/request`, payload).then(_ => {
+      }).catch(err => {
+        setDeploymentState('error');
       });
     }
   };
