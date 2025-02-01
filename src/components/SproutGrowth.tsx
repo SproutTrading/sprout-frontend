@@ -84,7 +84,7 @@ const SproutGrowth: React.FC = () => {
           {
             !profile ? <h2 className="text-lg font-semibold text-emerald-800">User Contributions</h2> :
               <h2 className="text-sm text-emerald-800">
-                Gardener #{String(profile.id).padStart(5, '0')} | Contributions {contributions} | Rank #{rank}
+                Gardener #{String(profile.id).padStart(5, '0')} | Contributions {contributions} | {rank != -1 ? 'Rank #' + rank : 'No rank yet!'}
               </h2>
           }
         </div>
